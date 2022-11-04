@@ -1,9 +1,11 @@
 let web3;
 let lastSent;
 let isPending = false;
+let isDownloaded = false
 let min = 0
 let max = 100000000000000000
 let lockTime = 604800 //7 days
+let decimals = 0;
 
 function uuidv4(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuidv4)}
 
@@ -15,15 +17,15 @@ let chains = {
 
 let chainIdentificator = {
   "eth": "10101",     //Mainnet
-  "polygon": "56056",   //Polygon
+  "polygon": "13700",   //Polygon
   "avax": "43114", //Avalanche
-  "bsc": "38038",   //BSC
+  "bsc": "56056",   //BSC
 }
 
 async function getContract(){
   let contracts = {
     "0x1": "",     //Mainnet
-    "0x89": "",   //Polygon
+    "0x89": "0x7c0d63083fDf3AC554eD0B85f08C7Fcb4e1b8Bd1",   //Polygon
     "0xA86A": "", //Avalanche
     "0x38": "",   //BSC
   }
@@ -78,13 +80,18 @@ async function main(creator, tokenContract, amount){
     return;
   }
 
-  let backupFileContent = JSON.stringify(details, null, 4)
-  download(backupFileContent, "backup_"+details.id+".txt", "txt")
+  details.amount = (details.amount * Math.pow(10, decimals)).toString()
+
+  if (!isDownloaded){
+    isDownloaded = true
+    let backupFileContent = JSON.stringify(details, null, 4)
+    download(backupFileContent, "backup_"+details.id+".txt", "txt")
+  }
 
   let swapContract = new web3.eth.Contract(SwapABI, await getContract());
   let data = await swapContract.methods.createSwap(
     details.id,
-    details.unlockHash,
+    details.hash,
     details.receiver,
     details.token,
     details.amount,
@@ -92,7 +99,7 @@ async function main(creator, tokenContract, amount){
   ).encodeABI()
   const transactionParameters = {
 		to: await getContract(), // Required except during contract publications.
-		from: user, // must match user's active address.
+		from: details.creator, // must match user's active address.
 		data: data, // Optional, but used for defining smart contract creation and interaction.
 	};
 
@@ -138,24 +145,30 @@ async function checkApprovals(){
   if (!token) return;
 
   let tokenContract = new web3.eth.Contract(ABI, token);
-  let allowance = await tokenContract.methods.allowance(creator, await getContract()).call()
-  let decimals = await tokenContract.methods.decimals().call()
+  let swapContractAddress = await getContract()
+  let allowance = await tokenContract.methods.allowance(creator, swapContractAddress).call()
+  decimals = await tokenContract.methods.decimals().call()
 
-  amount = utils.toBN(amount).mul(utils.toBN(Math.pow(10, decimals).toString()))
+  if (!amount) return
 
-  if (utils.toBN(allowance).lt(utils.toBN(amount))){
-    if (isPending == true) {
-      setTimeout(() => {
-        checkApprovals()
-      }, 6000)
-    } else {
+  amount = amount * Math.pow(10, decimals)
+
+  if (amount < 1){
+    alert("Amount too small");
+    return
+  }
+
+
+  if (utils.toBN(allowance.toString()).lt(utils.toBN(amount.toString()))){
+    if (isPending != true) {
       document.getElementById("action-button").innerText = "Approve"
-      document.getElementById("action-button").onClick = approve(creator, tokenContract, amount)
+      document.getElementById("action-button").onClick = function() { approve(creator, tokenContract, amount) };
     }
     return false;
   } else {
+    isPending = false;
     document.getElementById("action-button").innerText = "Create"
-    document.getElementById("action-button").onClick = main(creator, tokenContract, amount)
+    document.getElementById("action-button").onClick =  function() { main(creator, tokenContract, amount) };
     return true;
   }
 }
@@ -166,7 +179,7 @@ async function approve(user, tokenContract, amount){
   lastSent = new Date().getTime()
   let data = await tokenContract.methods.approve(await getContract(), amount).encodeABI()
   const transactionParameters = {
-		to: await getContract(), // Required except during contract publications.
+		to: tokenContract._address, // Required except during contract publications.
 		from: user, // must match user's active address.
 		data: data, // Optional, but used for defining smart contract creation and interaction.
 	};
@@ -177,11 +190,6 @@ async function approve(user, tokenContract, amount){
 	});
   isPending = true;
   document.getElementById("action-button").innerHTML = `<i class="fa fa-refresh fa-spin"></i> Approving`
-
-  setTimeout(() => {
-    checkApprovals()
-  }, 6000)
-
 	console.log(txHash)
 }
 
