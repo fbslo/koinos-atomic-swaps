@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Hashed Timelock Contract - Koinos - EVM</title>
+    <link href='https://fonts.googleapis.com/css?family=Fira%20Code' rel='stylesheet'>
+    <link rel="stylesheet" href="./view.css">
+    <script src="./view.js" charset="utf-8"></script>
+  </head>
+  <body onload="load()">
+    <div class="main">
+
+        <div style="width: 100%;" class='center'>
+          <a href="/" style="text-decoration:none;color:black;">[back]</a><p>
+          <div class="small-title">Create transaction on</div> <div class="large-title" id="chain-title">Koinos</div><p>
+           <div class="split">
+             <form class="" action="index.html" method="post">
+               <h1>BSC</h1><p>
+               <input type="text" name="Creator Address" placeholder="Creator Address"><p>
+               <input type="text" name="Receiver Address" placeholder="Receiver Address"><p>
+               <input type="text" name="Token Address" placeholder="Token Address"><p>
+               <input type="text" name="Token Amount" placeholder="Token Amount"><p>
+               <input type="text" name="Expiration" placeholder="Expiration"><p>
+             </form>
+           </div>
+           <div class="split">
+             <form class="" action="index.html" method="post">
+               <h1>Koinos</h1><p>
+               <input type="text" name="Creator Address" placeholder="Creator Address"><p>
+               <input type="text" name="Receiver Address" placeholder="Receiver Address"><p>
+               <input type="text" name="Token Address" placeholder="Token Address"><p>
+               <input type="text" name="Token Amount" placeholder="Token Amount"><p>
+               <button type="button" class="button buttonTime" id="604800" onClick="lockupTimeButton(this)">7 days</button>
+             </form>
+           </div>
+        </div>
+        <div class="center">
+          <div class="description">Swap ID</div>
+          <input type="text" name="Swap ID" placeholder="Swap ID"><p>
+            <div class="description">Swap Secret</div>
+          <input type="text" name="Swap Secret" placeholder="Swap Secret"><p>
+            <div class="description">Unlock Hash</div>
+          <input type="text" name="Unlock Hash" placeholder="Unlock Hash"><p>
+          <button class="button buttonCreate">Create</button>
+        </div>
+
+    <div class="footer">
+      <p>Created by @fbsloXBT</p>
+    </div>
+  </body>
+</html>
