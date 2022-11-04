@@ -5,20 +5,20 @@
     <title>Hashed Timelock Contract - Koinos - EVM</title>
     <link href='https://fonts.googleapis.com/css?family=Fira%20Code' rel='stylesheet'>
     <link rel="stylesheet" href="./create.css">
-    <script src="./index.js" charset="utf-8"></script>
+    <script src="./create.js" charset="utf-8"></script>
   </head>
-  <body onload="load()">
+  <body>
     <div class="main">
 
       <div style="width: 100%;">
          <div class="split">
            <form class="" action="index.html" method="post">
-             <h3>Create Transaction</h3>
-             <h1>BSC</h1><p>
-             <input type="text" name="Creator Address" placeholder="Creator Address"><p>
-             <input type="text" name="Receiver Address" placeholder="Receiver Address"><p>
-             <input type="text" name="Token Address" placeholder="Token Address"><p>
-             <input type="text" name="Token Amount" placeholder="Token Amount"><p>
+             <a href="/" style="text-decoration:none;color:black;">[back]</a><p>
+             <div class="small-title">Create transaction on</div> <div class="large-title">BSC</div><p>
+             <input type="text" id="creator" name="Creator Address" placeholder="Creator Address"><p>
+             <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address"><p>
+             <input type="text" id="token" name="Token Address" placeholder="Token Address"><p>
+             <input type="text" id="amount" name="Token Amount" placeholder="Token Amount"><p>
            </form>
          </div>
          <div class="split">
@@ -31,7 +31,7 @@
         <input type="text" name="Swap Secret" placeholder="Swap Secret"><p>
           <div class="description">Unlock Hash</div>
         <input type="text" name="Unlock Hash" placeholder="Unlock Hash"><p>
-        <button class="button buttonCreate">Create</button>
+        <button class="button buttonCreate" id="action-button" onclick="main()">Create</button>
       </div>
     </div>
 

@@ -90,3 +90,13 @@ input:focus {
   font-size: 12px;
   z-index: -1 !important;
 }
+
+.small-title {
+  font-size: 20px;
+  display:inline;
+}
+
+.large-title {
+  font-size: 30px;
+  display:inline;
+}
