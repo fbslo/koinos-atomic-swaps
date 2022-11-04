@@ -15,29 +15,48 @@ error AlreadyFinalized();
 error InvalidSecret();
 error AddressZero();
 
+/// @title A Hashed Timelock Contract
+/// @author @fbsloXBT
+/// @notice Contract used for OTC trades between Koinos on EVM chains
+
 contract HTLC {
+  /// @notice Struct that stores a swap details
   struct Swap {
     bytes32 unlockHash;
     address creator;
     address receiver;
     address token;
     uint256 amount;
-    uint256 expiration;
-    uint256 createdAt;
-    bool finalized;
+    uint64 expiration; // ┐
+    uint64 createdAt;  // │ packed in one slot
+    bool finalized;    // ┘
   }
+  /// @notice Mapping that links ID to swap details
   mapping (uint256 => Swap) public swaps;
 
+  /// @notice Possible lockup times (max wait time before expiration)
   enum LockTime {
     3 days,
     5 days,
     7 days
   };
 
+  /// @notice Emitted when swap is created
   event SwapCreated(uint256 id);
-  event SwapCanceled(uint256 id);
+  /// @notice Emitted when swap is completed
   event SwapCompleted(uint256 id);
+  /// @notice Emitted when swap is canceled without execution
+  event SwapCanceled(uint256 id);
 
+  /**
+   * @notice Create a new swap proposition
+   * @param id User specified ID (can be random, must be unique)
+   * @param unlockHash SHA256 hash of the secret that will be used to release the fund
+   * @param receiver Address that will receive funds on this chain
+   * @param token Address of the token that will be traded on this chain
+   * @param amount Amount of the token that will be traded on this chain
+   * @param lockTime Selected lockup time (from LockTime enum)
+   */
   function createSwap(
     uint256 id,
     bytes32 unlockHash,
@@ -50,25 +69,37 @@ contract HTLC {
     if (receiver == address(0)) revert AddressZero();
 
     swaps[id] = Swap(unlockHash, msg.sender, receiver, token, amount, block.timestamp + lockTime, block.timestamp, false);
+
     IERC20(token).transferFrom(msg.sender, address(this), amount);
     emit SwapCreated(id);
   }
 
+  /**
+   * @notice Complete a swap using a secret
+   * @param id User specified ID (can be random, must be unique)
+   * @param secret String that was used to create a unlockHash
+   */
   function completeSwap(uint256 id, string memory secret) external {
     if (swaps[id].expiration >= block.timestamp) revert Expired();
     if (swaps[id].finalized == true) revert AlreadyFinalized();
     if (keccak256(abi.encodePacked(secret)) != swaps[id].unlockHash) revert InvalidSecret();
 
     swaps[id].finalized = true;
+
     IERC20(swaps[id].token).transfer(swaps[id].receiver, swaps[id].amount);
     emit SwapCompleted(id);
   }
 
+  /**
+   * @notice Cancel an unexecuted swap after expiration and recover funds
+   * @param id User specified ID (can be random, must be unique)
+   */
   function cancelSwap(uint256 id) external {
     if (swaps[id].expiration > block.timestamp) revert NotExpired();
     if (swaps[id].finalized == true) revert AlreadyFinalized();
 
     swaps[id].finalized = true;
+
     IERC20(swaps[id].token).transfer(swaps[id].creator, swaps[id].amount);
     emit SwapCanceled(id);
   }
