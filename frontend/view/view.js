@@ -1,3 +1,5 @@
+let web3;
+
 let chainNodes = {
   "bsc": "https://bsc-dataseed1.binance.org/",
   "polygon": "https://polygon-rpc.com/",
@@ -11,6 +13,13 @@ let chainIdentificator = {
   "56056": "bsc"
 }
 
+let chainNames = {
+  "bsc": "BSC",
+  "polygon": "Polygon",
+  "avax": "Avalance"
+}
+
+
 async function getContract(){
   let contracts = {
     "0x1": "",     //Mainnet
@@ -18,23 +27,58 @@ async function getContract(){
     "0xA86A": "", //Avalanche
     "0x38": "",   //BSC
   }
-  let chainId = window.ethereum.providerChainId
+  return contracts[window.ethereum.providerChainId]
+}
 
-  return contracts[chainId]
+let lockTimes = {
+  "259200": "172800", //3 days => 2 days
+  "432000": "302400", //5 days => 3.5 days
+  "604800": "432000" //7 days => 5 days
 }
 
 async function load(){
-  await getEvmSwap()
-}
-
-async function getEvmSwap(){
   let orderId = getParameterByName("id")
   let chain = chainIdentificator[orderId.slice(0, 5)]
-  let web3 = new Web3(chainNodes[chain])
+  if (orderId == "5605648565580577177224") chain = "polygon" //for test order
+  web3 = new Web3(chainNodes[chain])
+  document.getElementById("counterpartyChain").innerText = chainNames[chain]
 
-  let swapContract = new web3.eth.Contract(SwapABI, await getContract());
+  if (window.ethereum.providerChainId == undefined){
+    let interval = setInterval(async () => {
+      if (window.ethereum.providerChainId != undefined) {
+        clearInterval(interval)
+        await getEvmSwap(orderId)
+      }
+    }, 1000)
+  }
+}
+
+async function getEvmSwap(orderId){
+  let swapContractAddress = await getContract()
+  let swapContract = new web3.eth.Contract(SwapABI, swapContractAddress);
   let orderInfo = await swapContract.methods.swaps(orderId).call()
-  console.log(orderInfo)
+  let decimals = await (new web3.eth.Contract(ABI, orderInfo.token)).methods.decimals().call()
+  document.getElementById("evm_creator").value = orderInfo.creator
+  document.getElementById("evm_receiver").value = orderInfo.receiver
+  document.getElementById("evm_token").value = orderInfo.token
+  document.getElementById("evm_amount").value = orderInfo.amount / Math.pow(10, decimals) + ` (${orderInfo.amount})`
+  document.getElementById("evm_expiration").value = new Date(Number(orderInfo.expiration) * 1000).toString().split("(")[0] + ` (${await countdown(orderInfo.expiration)})`
+
+  let orderLockTime = orderInfo.expiration - orderInfo.createdAt
+  let koinosLockTime = lockTimes[orderLockTime]
+
+  document.getElementById("lockTime").innerText = parseFloat(koinosLockTime / 86000).toFixed(1) + " days"
+}
+
+async function countdown(timestamp){
+  let now = new Date().getTime();
+  let distance = (Number(timestamp) * 1000) - now;
+  let days = Math.floor(distance / (1000*3600*24));
+  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  return days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
 }
 
 function getParameterByName(name, url = window.location.href) {
