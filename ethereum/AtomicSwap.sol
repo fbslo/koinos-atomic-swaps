@@ -30,6 +30,7 @@ contract HTLC {
     uint64 expiration; // ┐
     uint64 createdAt;  // │ packed in one slot
     bool finalized;    // ┘
+    string secret;
   }
   /// @notice Mapping that links ID to swap details
   mapping (uint256 => Swap) public swaps;
@@ -37,7 +38,7 @@ contract HTLC {
   /// @notice Emitted when swap is created
   event SwapCreated(uint256 id);
   /// @notice Emitted when swap is completed
-  event SwapCompleted(uint256 id);
+  event SwapCompleted(uint256 id, string secret);
   /// @notice Emitted when swap is canceled without execution
   event SwapCanceled(uint256 id);
 
@@ -78,9 +79,10 @@ contract HTLC {
     if (keccak256(abi.encodePacked(secret)) != swaps[id].unlockHash) revert InvalidSecret();
 
     swaps[id].finalized = true;
+    swaps[id].secret = secret;
 
     IERC20(swaps[id].token).transfer(swaps[id].receiver, swaps[id].amount);
-    emit SwapCompleted(id);
+    emit SwapCompleted(id, secret);
   }
 
   /**
