@@ -1,0 +1,12 @@
+{
+    "methods": {
+        "createSwap": {
+            "argument": "AtomicSwap.createSwap_arguments",
+            "return": "AtomicSwap.createSwap_result",
+            "description": "Create new Swap transaction",
+            "entry-point": "0x948580ff",
+            "read-only": true
+        }
+    },
+    "types": "CpoDCh9hc3NlbWJseS9wcm90by9BdG9taWNTd2FwLnByb3RvEgpBdG9taWNTd2FwGhRrb2lub3Mvb3B0aW9ucy5wcm90byIWChRjcmVhdGVTd2FwX2FyZ3VtZW50cyInChFjcmVhdGVTd2FwX3Jlc3VsdBISCgJpZBgBIAEoBEICMAFSAmlkIosCCgtzd2FwX29iamVjdBIeCgp1bmxvY2tIYXNoGAEgASgMUgp1bmxvY2tIYXNoEh4KB2NyZWF0b3IYAiABKAxCBIC1GAZSB2NyZWF0b3ISIAoIcmVjZWl2ZXIYAyABKAxCBIC1GAZSCHJlY2VpdmVyEhoKBXRva2VuGAQgASgMQgSAtRgGUgV0b2tlbhIaCgZhbW91bnQYBSABKARCAjABUgZhbW91bnQSIgoKZXhwaXJhdGlvbhgGIAEoBEICMAFSCmV4cGlyYXRpb24SIAoJY3JlYXRlZEF0GAcgASgEQgIwAVIJY3JlYXRlZEF0EhwKCWZpbmFsaXplZBgIIAEoCFIJZmluYWxpemVkYgZwcm90bzM="
+}

@@ -1,0 +1,87 @@
+{
+    "methods": {
+        "createSwap": {
+            "input": "AtomicSwap.createSwap_arguments",
+            "output": "AtomicSwap.createSwap_result",
+            "description": "Create new Swap transaction",
+            "entryPoint": 2491777279,
+            "readOnly": true
+        }
+    },
+    "types": {
+        "nested": {
+            "AtomicSwap": {
+                "nested": {
+                    "createSwap_arguments": {
+                        "fields": {}
+                    },
+                    "createSwap_result": {
+                        "fields": {
+                            "id": {
+                                "type": "uint64",
+                                "id": 1,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            }
+                        }
+                    },
+                    "swap_object": {
+                        "fields": {
+                            "unlockHash": {
+                                "type": "bytes",
+                                "id": 1
+                            },
+                            "creator": {
+                                "type": "bytes",
+                                "id": 2,
+                                "options": {
+                                    "(koinos.btype)": "ADDRESS"
+                                }
+                            },
+                            "receiver": {
+                                "type": "bytes",
+                                "id": 3,
+                                "options": {
+                                    "(koinos.btype)": "ADDRESS"
+                                }
+                            },
+                            "token": {
+                                "type": "bytes",
+                                "id": 4,
+                                "options": {
+                                    "(koinos.btype)": "ADDRESS"
+                                }
+                            },
+                            "amount": {
+                                "type": "uint64",
+                                "id": 5,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "expiration": {
+                                "type": "uint64",
+                                "id": 6,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "createdAt": {
+                                "type": "uint64",
+                                "id": 7,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "finalized": {
+                                "type": "bool",
+                                "id": 8
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

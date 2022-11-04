@@ -8,7 +8,6 @@ interface IERC20 {
   function balanceOf(address user) external returns (uint256);
 }
 
-
 contract HTLC {
   struct Swap {
     bytes32 unlockHash;
@@ -43,7 +42,7 @@ contract HTLC {
   }
 
   function completeSwap(uint256 id, string memory secret) external {
-    require(swaps[id].expiration <= block.timestamp, "exipred");
+    require(swaps[id].expiration <= block.timestamp, "expired");
     require(swaps[id].finalized == false, "already finalized");
     require(keccak256(abi.encodePacked(secret)) == swaps[id].unlockHash, "invalid secret");
 

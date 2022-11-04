@@ -2,7 +2,9 @@
   "name": "calculator",
   "version": "0.1.0",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "koinos-sdk-as-cli": "^0.1.16"
+  },
   "devDependencies": {
     "@as-covers/core": "^0.2.1",
     "@as-pect/cli": "^6.2.4",

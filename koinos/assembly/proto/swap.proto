@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package swap;
+
+import "koinos/options.proto";
+
+/*
+   @description Create new Swap transaction
+   @read-only false
+*/
+message createSwap_arguments {
+  bytes unlockHash = 1;
+  bytes creator = 2 [(koinos.btype) = ADDRESS];
+  bytes receiver = 3 [(koinos.btype) = ADDRESS];
+  bytes token = 4 [(koinos.btype) = ADDRESS];
+  uint64 amount  = 5 [jstype = JS_STRING];
+  uint64 id  = 6 [jstype = JS_STRING];
+
+}
+
+message createSwap_result {
+   uint64 id = 1 [jstype = JS_STRING];
+}
+
+/*
+   @description Complete a Swap transaction
+   @read-only false
+*/
+message completeSwap_arguments {
+  uint64 id = 1 [jstype = JS_STRING];
+  string secret = 2;
+}
+
+message completeSwap_result {
+  bool result = 1;
+}
+
+message swap_object {
+  bytes unlockHash = 1;
+  bytes creator = 2 [(koinos.btype) = ADDRESS];
+  bytes receiver = 3 [(koinos.btype) = ADDRESS];
+  bytes token = 4 [(koinos.btype) = ADDRESS];
+  uint64 amount  = 5 [jstype = JS_STRING];
+  uint64 expiration  = 6 [jstype = JS_STRING];
+  uint64 createdAt  = 7 [jstype = JS_STRING];
+  bool finalized = 8;
+  uint64 id  = 9 [jstype = JS_STRING];
+}
+
+message create_event {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message complete_event {
+  uint64 id = 1 [jstype = JS_STRING];
+}
