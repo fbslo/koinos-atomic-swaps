@@ -3,7 +3,11 @@ import { swap } from "./proto/swap";
 import { State } from "./State";
 
 const TOKEN_CONTRACT_ID = Base58.decode('19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ');
-const LOCK_TIME = 432000; //5 days
+enum LockTime {
+  0 = 172800, //2.0 days
+  1 = 302400, //3.5 days
+  2 = 432000  //4.0 days
+}
 
 export class Swap {
   _contractId: Uint8Array;
@@ -37,7 +41,7 @@ export class Swap {
       args.receiver,
       args.token,
       args.amount,
-      System.getHeadInfo().head_block_time + LOCK_TIME,
+      System.getHeadInfo().head_block_time + LockTime[args.lockTime],
       System.getHeadInfo().head_block_time,
       false,
       args.id

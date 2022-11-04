@@ -15,7 +15,7 @@ message createSwap_arguments {
   bytes token = 4 [(koinos.btype) = ADDRESS];
   uint64 amount  = 5 [jstype = JS_STRING];
   uint64 id  = 6 [jstype = JS_STRING];
-
+  uint64 lockTime = 7 [jstype = JS_STRING];
 }
 
 message createSwap_result {
