@@ -46,6 +46,10 @@
   width: 10%;
 }
 
+.buttonLarge {
+  width: 15%;
+}
+
 .buttonCreate:hover {
   border-color: #25174E;
   background-color: #25174E;
@@ -72,11 +76,12 @@
 .center {
   text-align: center;
   justify-content: center;
+  padding-top: 30px;
 }
 
 input {
   box-shadow: 5px 5px;
-  width: 250px;
+  width: 550px;
   height: 40px;
   outline: none;
   color: black;
@@ -87,6 +92,5 @@ input:focus {
 }
 
 .description {
-  font-size: 12px;
-  z-index: -1 !important;
+  padding-bottom: 15px;
 }

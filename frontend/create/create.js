@@ -7,6 +7,12 @@ let lockTime = 604800 //7 days
 
 function uuidv4(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuidv4)}
 
+let chains = {
+  "bsc": "BSC",
+  "polygon": "Polygon",
+  "avax": "Avalance"
+}
+
 async function getContract(){
   let contracts = {
     "0x1": "",     //Mainnet
@@ -19,7 +25,7 @@ async function getContract(){
   return contracts[chainId]
 }
 
-async function prepareSecret(){
+async function init(){
   let id = Math.floor(Math.random() * (max - min + 1)) + min;;
   let secret = "secret_"+uuidv4();
   let hash = (new Web3()).utils.soliditySha3(secret)
@@ -29,6 +35,9 @@ async function prepareSecret(){
   document.getElementById("unlockHash").value = hash;
 
   document.getElementById("604800").classList.add("buttonTime-selected");
+
+  let chain = getParameterByName("chain")
+  document.getElementById("chain-title").innerText = chains[chain] ? chains[chain] : "BSC"
 }
 
 async function main(creator, tokenContract, amount){
@@ -185,4 +194,13 @@ async function lockupTimeButton(x){
   document.getElementById("604800").classList.remove("buttonTime-selected");
 
   x.classList.add("buttonTime-selected");
+}
+
+function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }

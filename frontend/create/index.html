@@ -11,14 +11,14 @@
     <script src="./create.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js" integrity="sha512-bSQ2kf76XufUYS/4XinoHLp5S4lNOyRv0/x5UJACiOMy8ueqTNwRFfUZWmWpwnczjRp9SjiF1jrXbGEim7Y0Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
-  <body onLoad="prepareSecret()">
+  <body onLoad="init()">
     <div class="main">
 
       <div style="width: 100%;">
          <div class="split">
            <form class="" action="" method="post">
              <a href="/" style="text-decoration:none;color:black;">[back]</a><p>
-             <div class="small-title">Create transaction on</div> <div class="large-title">BSC</div><p>
+             <div class="small-title">Create transaction on</div> <div class="large-title" id="chain-title">BSC</div><p>
              <input type="text" id="creator" name="Creator Address" placeholder="Your Address"><p>
              <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address"><p>
              <input type="text" id="token" name="Token Address" placeholder="Token Address" onchange="checkApprovals()"><p>

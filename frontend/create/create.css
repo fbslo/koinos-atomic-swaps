@@ -86,11 +86,6 @@ input:focus {
   color: #6F00F6;
 }
 
-.description {
-  font-size: 12px;
-  z-index: -1 !important;
-}
-
 .small-title {
   font-size: 20px;
   display:inline;
