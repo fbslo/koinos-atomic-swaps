@@ -8,6 +8,13 @@ interface IERC20 {
   function balanceOf(address user) external returns (uint256);
 }
 
+error IdNotUnique(uint256 id);
+error Expired();
+error NotExpired();
+error AlreadyFinalized();
+error InvalidSecret();
+error AddressZero();
+
 contract HTLC {
   struct Swap {
     bytes32 unlockHash;
@@ -21,30 +28,36 @@ contract HTLC {
   }
   mapping (uint256 => Swap) public swaps;
 
-  uint256 public lockTime = 5 days;
+  enum LockTime {
+    3 days,
+    5 days,
+    7 days
+  };
 
   event SwapCreated(uint256 id);
   event SwapCanceled(uint256 id);
   event SwapCompleted(uint256 id);
 
-  function createASwap(
+  function createSwap(
     uint256 id,
     bytes32 unlockHash,
     address receiver,
     address token,
-    uint256 amount
+    uint256 amount,
+    LockTime lockTime
   ) external {
-    require(swaps[id].creator == address(0), "ID not unique");
+    if (swaps[id].creator != address(0)) revert IdNotUnique(id);
+    if (receiver == address(0)) revert AddressZero();
 
-    IERC20(token).transferFrom(msg.sender, address(this), amount);
     swaps[id] = Swap(unlockHash, msg.sender, receiver, token, amount, block.timestamp + lockTime, block.timestamp, false);
+    IERC20(token).transferFrom(msg.sender, address(this), amount);
     emit SwapCreated(id);
   }
 
   function completeSwap(uint256 id, string memory secret) external {
-    require(swaps[id].expiration <= block.timestamp, "expired");
-    require(swaps[id].finalized == false, "already finalized");
-    require(keccak256(abi.encodePacked(secret)) == swaps[id].unlockHash, "invalid secret");
+    if (swaps[id].expiration >= block.timestamp) revert Expired();
+    if (swaps[id].finalized == true) revert AlreadyFinalized();
+    if (keccak256(abi.encodePacked(secret)) != swaps[id].unlockHash) revert InvalidSecret();
 
     swaps[id].finalized = true;
     IERC20(swaps[id].token).transfer(swaps[id].receiver, swaps[id].amount);
@@ -52,9 +65,8 @@ contract HTLC {
   }
 
   function cancelSwap(uint256 id) external {
-    require(msg.sender == swaps[id].creator, "not a creator");
-    require(block.timestamp > swaps[id].expiration, "not exipred");
-    require(swaps[id].finalized == false, "already finalized");
+    if (swaps[id].expiration > block.timestamp) revert NotExpired();
+    if (swaps[id].finalized == true) revert AlreadyFinalized();
 
     swaps[id].finalized = true;
     IERC20(swaps[id].token).transfer(swaps[id].creator, swaps[id].amount);

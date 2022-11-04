@@ -13,6 +13,13 @@
             "description": "Complete a Swap transaction",
             "entryPoint": 697521037,
             "readOnly": false
+        },
+        "cancelSwap": {
+            "input": "swap.cancelSwap_arguments",
+            "output": "swap.cancelSwap_result",
+            "description": "Cancel a Swap transaction",
+            "entryPoint": 280700488,
+            "readOnly": false
         }
     },
     "types": {
@@ -96,6 +103,25 @@
                             }
                         }
                     },
+                    "cancelSwap_arguments": {
+                        "fields": {
+                            "id": {
+                                "type": "uint64",
+                                "id": 1,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            }
+                        }
+                    },
+                    "cancelSwap_result": {
+                        "fields": {
+                            "result": {
+                                "type": "bool",
+                                "id": 1
+                            }
+                        }
+                    },
                     "swap_object": {
                         "fields": {
                             "unlockHash": {
@@ -169,6 +195,17 @@
                         }
                     },
                     "complete_event": {
+                        "fields": {
+                            "id": {
+                                "type": "uint64",
+                                "id": 1,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            }
+                        }
+                    },
+                    "cancel_event": {
                         "fields": {
                             "id": {
                                 "type": "uint64",

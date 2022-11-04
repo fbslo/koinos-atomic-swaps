@@ -35,6 +35,20 @@ message completeSwap_result {
   bool result = 1;
 }
 
+/*
+   @description Cancel a Swap transaction
+   @read-only false
+*/
+message cancelSwap_arguments {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message cancelSwap_result {
+  bool result = 1;
+}
+
+//Objects
+
 message swap_object {
   bytes unlockHash = 1;
   bytes creator = 2 [(koinos.btype) = ADDRESS];
@@ -47,10 +61,16 @@ message swap_object {
   uint64 id  = 9 [jstype = JS_STRING];
 }
 
+//Events
+
 message create_event {
   uint64 id = 1 [jstype = JS_STRING];
 }
 
 message complete_event {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message cancel_event {
   uint64 id = 1 [jstype = JS_STRING];
 }

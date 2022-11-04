@@ -27,7 +27,7 @@ export class Swap {
     }
 
     if (!this._token.transfer(creator, this._contractId, args.amount)) {
-      System.log("Token transfer from 'account' failed");
+      System.log("Token transfer from creator failed");
       return res;
     }
 
@@ -71,17 +71,43 @@ export class Swap {
       return new swap.completeSwap_result(false);
     }
 
-    swapObj.finalized = true;
-    this._state.saveSwap(swapObj.id, swapObj);
-
     if (!this._token.transfer(this._contractId, swapObj.receiver as Uint8Array, swapObj.amount)) {
-      System.log('Contract had insufficient funds for withdraw ¯\\_(ツ)_/¯');
+      System.log('Token transfer to receiver failed');
       return new swap.completeSwap_result(false);
     }
+
+    swapObj.finalized = true;
+    this._state.saveSwap(swapObj.id, swapObj);
 
     System.event('atomicSwap.completeSwap', Protobuf.encode(new swap.complete_event(swapObj.id), swap.complete_event.encode), [swapObj.receiver as Uint8Array]);
 
     return new swap.completeSwap_result(true);
   }
 
+  cancelSwap(args: swap.cancelSwap_arguments): swap.cancelSwap_result {
+    const currentTime = System.getHeadInfo().head_block_time;
+    const swapObj = this._state.getSwap(args.id);
+
+    if (currentTime <= swapObj.expiration){
+      System.log("Not expired");
+      return new swap.cancelSwap_result(false);
+    }
+
+    if (swapObj.finalized != false){
+      System.log("Already finalized");
+      return new swap.cancelSwap_result(false);
+    }
+
+    if (!this._token.transfer(this._contractId, swapObj.creator as Uint8Array, swapObj.amount)) {
+      System.log('Token transfer to creator failed');
+      return new swap.cancelSwap_result(false);
+    }
+
+    swapObj.finalized = true;
+    this._state.saveSwap(swapObj.id, swapObj);
+
+    System.event('atomicSwap.cancelSwap', Protobuf.encode(new swap.cancel_event(swapObj.id), swap.cancel_event.encode), [swapObj.creator as Uint8Array]);
+
+    return new swap.cancelSwap_result(true);
+  }
 }
