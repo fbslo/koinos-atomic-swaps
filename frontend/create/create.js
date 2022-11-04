@@ -13,6 +13,13 @@ let chains = {
   "avax": "Avalance"
 }
 
+let chainIdentificator = {
+  "eth": "10101",     //Mainnet
+  "polygon": "56056",   //Polygon
+  "avax": "43114", //Avalanche
+  "bsc": "38038",   //BSC
+}
+
 async function getContract(){
   let contracts = {
     "0x1": "",     //Mainnet
@@ -26,7 +33,9 @@ async function getContract(){
 }
 
 async function init(){
-  let id = Math.floor(Math.random() * (max - min + 1)) + min;;
+  let chain = getParameterByName("chain")
+
+  let id = chainIdentificator[chain] + (Math.floor(Math.random() * (max - min + 1)) + min);
   let secret = "secret_"+uuidv4();
   let hash = (new Web3()).utils.soliditySha3(secret)
 
@@ -35,8 +44,6 @@ async function init(){
   document.getElementById("unlockHash").value = hash;
 
   document.getElementById("604800").classList.add("buttonTime-selected");
-
-  let chain = getParameterByName("chain")
   document.getElementById("chain-title").innerText = chains[chain] ? chains[chain] : "BSC"
 }
 

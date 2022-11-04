@@ -5,6 +5,8 @@
     <title>Hashed Timelock Contract - Koinos - EVM</title>
     <link href='https://fonts.googleapis.com/css?family=Fira%20Code' rel='stylesheet'>
     <link rel="stylesheet" href="./view.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js" integrity="sha512-bSQ2kf76XufUYS/4XinoHLp5S4lNOyRv0/x5UJACiOMy8ueqTNwRFfUZWmWpwnczjRp9SjiF1jrXbGEim7Y0Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./ABI.js" charset="utf-8"></script>
     <script src="./view.js" charset="utf-8"></script>
   </head>
   <body onload="load()">
@@ -15,7 +17,7 @@
           <div class="small-title">Create transaction on</div> <div class="large-title" id="chain-title">Koinos</div><p>
            <div class="split">
              <form class="" action="index.html" method="post">
-               <h1>BSC</h1><p>
+               <h1 id='counterpartyChain'>BSC</h1><p>
                <input type="text" name="Creator Address" placeholder="Creator Address"><p>
                <input type="text" name="Receiver Address" placeholder="Receiver Address"><p>
                <input type="text" name="Token Address" placeholder="Token Address"><p>
