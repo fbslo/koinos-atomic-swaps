@@ -3,6 +3,7 @@ Create transaction on Koinos with same ID and deposit tokens.
 
 Once both transactions are verified, sign message on Ethereum, which will unlock both Koinos and Ethereum tokens.
 
+```
 {
   secretHash: "",
   receiverAddress: "",
@@ -12,3 +13,4 @@ Once both transactions are verified, sign message on Ethereum, which will unlock
   expiration: "",
   isDeployer: bool
 }
+```
