@@ -16,3 +16,9 @@ Ethereum Swap must be created first;
   isDeployer: bool
 }
 ```
+
+---
+
+Frontend flow:
+
+User selects creation, selects chain, fills his details and sends tx on his chain.
