@@ -34,13 +34,6 @@ contract HTLC {
   /// @notice Mapping that links ID to swap details
   mapping (uint256 => Swap) public swaps;
 
-  /// @notice Possible lockup times (max wait time before expiration)
-  enum LockTime {
-    3 days,
-    5 days,
-    7 days
-  };
-
   /// @notice Emitted when swap is created
   event SwapCreated(uint256 id);
   /// @notice Emitted when swap is completed
@@ -63,12 +56,12 @@ contract HTLC {
     address receiver,
     address token,
     uint256 amount,
-    LockTime lockTime
+    uint256 lockTime
   ) external {
     if (swaps[id].creator != address(0)) revert IdNotUnique(id);
     if (receiver == address(0)) revert AddressZero();
 
-    swaps[id] = Swap(unlockHash, msg.sender, receiver, token, amount, block.timestamp + lockTime, block.timestamp, false);
+    swaps[id] = Swap(unlockHash, msg.sender, receiver, token, amount, uint64(block.timestamp + lockTime), uint64(block.timestamp), false);
 
     IERC20(token).transferFrom(msg.sender, address(this), amount);
     emit SwapCreated(id);

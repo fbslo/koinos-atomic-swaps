@@ -76,7 +76,7 @@
 
 input {
   box-shadow: 5px 5px;
-  width: 250px;
+  width: 550px;
   height: 40px;
   outline: none;
   color: black;
@@ -99,4 +99,17 @@ input:focus {
 .large-title {
   font-size: 30px;
   display:inline;
+}
+
+.buttonTime {
+  background-color: white;
+  color: black;
+  border: 2px solid #555555;
+  padding: 10px 20px;
+}
+
+.buttonTime-selected {
+  border-color: #25174E;
+  background-color: #25174E;
+  color: white;
 }

@@ -5,22 +5,27 @@
     <title>Hashed Timelock Contract - Koinos - EVM</title>
     <link href='https://fonts.googleapis.com/css?family=Fira%20Code' rel='stylesheet'>
     <link rel="stylesheet" href="./create.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="./ABI.js" charset="utf-8"></script>
     <script src="./create.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js" integrity="sha512-bSQ2kf76XufUYS/4XinoHLp5S4lNOyRv0/x5UJACiOMy8ueqTNwRFfUZWmWpwnczjRp9SjiF1jrXbGEim7Y0Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
-  <body>
+  <body onLoad="prepareSecret()">
     <div class="main">
 
       <div style="width: 100%;">
          <div class="split">
-           <form class="" action="index.html" method="post">
+           <form class="" action="" method="post">
              <a href="/" style="text-decoration:none;color:black;">[back]</a><p>
              <div class="small-title">Create transaction on</div> <div class="large-title">BSC</div><p>
              <input type="text" id="creator" name="Creator Address" placeholder="Your Address"><p>
              <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address"><p>
-             <input type="text" id="token" name="Token Address" placeholder="Token Address"><p>
-             <input type="text" id="amount" name="Token Amount" placeholder="Token Amount"><p>
+             <input type="text" id="token" name="Token Address" placeholder="Token Address" onchange="checkApprovals()"><p>
+             <input type="text" id="amount" name="Token Amount" placeholder="Token Amount" onchange="checkApprovals()"><p>
+             <button type="button" class="button buttonTime" id="259200" onClick="lockupTimeButton(this)">3 days</button>
+             <button type="button" class="button buttonTime" id="432000" onClick="lockupTimeButton(this)">5 days</button>
+             <button type="button" class="button buttonTime" id="604800" onClick="lockupTimeButton(this)">7 days</button>
            </form>
          </div>
          <div class="split">
@@ -28,17 +33,17 @@
       </div>
       <div class="center">
         <div class="description">Swap ID</div>
-        <input type="text" name="Swap ID" placeholder="Swap ID"><p>
+        <input type="text" id="id" readonly="readonly" name="Swap ID" placeholder="Swap ID"><p>
           <div class="description">Swap Secret</div>
-        <input type="text" name="Swap Secret" placeholder="Swap Secret"><p>
+        <input type="text" id="secret" readonly="readonly" name="Swap Secret" placeholder="Swap Secret"><p>
           <div class="description">Unlock Hash</div>
-        <input type="text" name="Unlock Hash" placeholder="Unlock Hash"><p>
+        <input type="text" id="unlockHash" readonly="readonly" name="Unlock Hash" placeholder="Unlock Hash"><p>
         <button class="button buttonCreate" id="action-button" onclick="main()">Create</button>
       </div>
     </div>
 
     <div class="footer">
-      <p>Created by @fbsloXBT</p>
+      <p>Created by <a href="https://twitter.com/fbsloXBT" style="text-decoration:none;color:black;" target="_blank">@fbsloXBT</a></p>
     </div>
   </body>
 </html>

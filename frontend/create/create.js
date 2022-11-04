@@ -1,23 +1,172 @@
-let CONTRACT = ""
+let web3;
+let lastSent;
+let isPending = false;
+let min = 0
+let max = 100000000000000000
+let lockTime = 604800 //7 days
 
-async function main(){
+function uuidv4(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuidv4)}
+
+async function getContract(){
+  let contracts = {
+    "0x1": "",     //Mainnet
+    "0x89": "",   //Polygon
+    "0xA86A": "", //Avalanche
+    "0x38": "",   //BSC
+  }
+  let chainId = window.ethereum.providerChainId
+
+  return contracts[chainId]
+}
+
+async function prepareSecret(){
+  let id = Math.floor(Math.random() * (max - min + 1)) + min;;
+  let secret = "secret_"+uuidv4();
+  let hash = (new Web3()).utils.soliditySha3(secret)
+
+  document.getElementById("id").value = id;
+  document.getElementById("secret").value = secret;
+  document.getElementById("unlockHash").value = hash;
+
+  document.getElementById("604800").classList.add("buttonTime-selected");
+}
+
+async function main(creator, tokenContract, amount){
+  await checkApprovals()
+
+  let details = {
+    creator: document.getElementById("creator").value,
+    receiver: document.getElementById("receiver").value,
+    token: document.getElementById("token").value,
+    amount: document.getElementById("amount").value,
+    id: document.getElementById("id").value,
+    secret: document.getElementById("secret").value,
+    hash: document.getElementById("unlockHash").value,
+    lockTime: lockTime
+  }
+
+  if (!(new Web3()).utils.isAddress(details.creator)) {
+    document.getElementById("creator").focus()
+    return;
+  }
+  if (details.receiver.length == 0) {
+    document.getElementById("receiver").focus()
+    return;
+  }
+  if (!(new Web3()).utils.isAddress(details.token)) {
+    document.getElementById("token").focus()
+    return;
+  }
+  if (!details.amount) {
+    document.getElementById("amount").focus()
+    return;
+  }
+
+  let backupFileContent = JSON.stringify(details, null, 4)
+  download(backupFileContent, "backup_"+details.id+".txt", "txt")
+
+  let swapContract = new web3.eth.Contract(SwapABI, await getContract());
+  let data = await swapContract.methods.createSwap(
+    details.id,
+    details.unlockHash,
+    details.receiver,
+    details.token,
+    details.amount,
+    details.lockTime
+  ).encodeABI()
+  const transactionParameters = {
+		to: await getContract(), // Required except during contract publications.
+		from: user, // must match user's active address.
+		data: data, // Optional, but used for defining smart contract creation and interaction.
+	};
+
+	const txHash = await ethereum.request({
+		method: 'eth_sendTransaction',
+		params: [transactionParameters],
+	});
+  Swal.fire(
+    'Congratulations!',
+    'Transaction was sent: '+ txHash,
+    'success'
+  )
+}
+
+function download(data, filename, type) {
+  let file = new Blob([data], {type: type});
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+    window.navigator.msSaveOrOpenBlob(file, filename);
+  else {
+    var a = document.createElement("a"),
+    url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 0);
+  }
+}
+
+async function checkApprovals(){
   let account = await connectMetamask()
-  let web3 = new Web3(window.ethereum)
+  web3 = new Web3(window.ethereum)
+  let utils = web3.utils;
 
   let token = document.getElementById("token").value
   let amount = document.getElementById("amount").value
   let creator = document.getElementById("creator").value
 
-  let contract = new web3.eth.Contract(ABI, token);
-  let allowance = await contract.methods.allowance(creator, CONTRACT).call()
+  if (!creator) creator = account
+  if (!token) return;
 
-  if (Number(allowance) < Number(amount)){
-    alert("Allowance not sufficient")
-    //show approve button
+  let tokenContract = new web3.eth.Contract(ABI, token);
+  let allowance = await tokenContract.methods.allowance(creator, await getContract()).call()
+  let decimals = await tokenContract.methods.decimals().call()
+
+  amount = utils.toBN(amount).mul(utils.toBN(Math.pow(10, decimals).toString()))
+
+  if (utils.toBN(allowance).lt(utils.toBN(amount))){
+    if (isPending == true) {
+      setTimeout(() => {
+        checkApprovals()
+      }, 6000)
+    } else {
+      document.getElementById("action-button").innerText = "Approve"
+      document.getElementById("action-button").onClick = approve(creator, tokenContract, amount)
+    }
+    return false;
+  } else {
+    document.getElementById("action-button").innerText = "Create"
+    document.getElementById("action-button").onClick = main(creator, tokenContract, amount)
+    return true;
   }
+}
 
-  //create && deposit
+async function approve(user, tokenContract, amount){
+  if (new Date().getTime() - lastSent < 2000) return; //avoid multiple tx sent to wallet bug
 
+  lastSent = new Date().getTime()
+  let data = await tokenContract.methods.approve(await getContract(), amount).encodeABI()
+  const transactionParameters = {
+		to: await getContract(), // Required except during contract publications.
+		from: user, // must match user's active address.
+		data: data, // Optional, but used for defining smart contract creation and interaction.
+	};
+
+	const txHash = await ethereum.request({
+		method: 'eth_sendTransaction',
+		params: [transactionParameters],
+	});
+  isPending = true;
+  document.getElementById("action-button").innerHTML = `<i class="fa fa-refresh fa-spin"></i> Approving`
+
+  setTimeout(() => {
+    checkApprovals()
+  }, 6000)
+
+	console.log(txHash)
 }
 
 async function connectMetamask(){
@@ -27,4 +176,13 @@ async function connectMetamask(){
 	} else {
 		alert("MetaMask is not installed!")
 	}
+}
+
+async function lockupTimeButton(x){
+  lockTime = x.id
+  document.getElementById("259200").classList.remove("buttonTime-selected");
+  document.getElementById("432000").classList.remove("buttonTime-selected");
+  document.getElementById("604800").classList.remove("buttonTime-selected");
+
+  x.classList.add("buttonTime-selected");
 }
