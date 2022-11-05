@@ -66,6 +66,13 @@
                                 "options": {
                                     "jstype": "JS_STRING"
                                 }
+                            },
+                            "lockTime": {
+                                "type": "uint64",
+                                "id": 7,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
                             }
                         }
                     },
@@ -180,6 +187,10 @@
                                 "options": {
                                     "jstype": "JS_STRING"
                                 }
+                            },
+                            "secret": {
+                                "type": "string",
+                                "id": 10
                             }
                         }
                     },
@@ -202,6 +213,10 @@
                                 "options": {
                                     "jstype": "JS_STRING"
                                 }
+                            },
+                            "secret": {
+                                "type": "string",
+                                "id": 2
                             }
                         }
                     },

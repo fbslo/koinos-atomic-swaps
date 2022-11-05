@@ -3,11 +3,6 @@ import { swap } from "./proto/swap";
 import { State } from "./State";
 
 const TOKEN_CONTRACT_ID = Base58.decode('19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ');
-enum LockTime {
-  0 = 172800, //2.0 days
-  1 = 302400, //3.5 days
-  2 = 432000  //4.0 days
-}
 
 export class Swap {
   _contractId: Uint8Array;
@@ -41,10 +36,11 @@ export class Swap {
       args.receiver,
       args.token,
       args.amount,
-      System.getHeadInfo().head_block_time + LockTime[args.lockTime],
+      System.getHeadInfo().head_block_time + args.lockTime,
       System.getHeadInfo().head_block_time,
       false,
-      args.id
+      args.id,
+      ""
     );
     this._state.saveSwap(id, newSwap);
 
@@ -81,9 +77,10 @@ export class Swap {
     }
 
     swapObj.finalized = true;
+    swapObj.secret = args.secret;
     this._state.saveSwap(swapObj.id, swapObj);
 
-    System.event('atomicSwap.completeSwap', Protobuf.encode(new swap.complete_event(swapObj.id), swap.complete_event.encode), [swapObj.receiver as Uint8Array]);
+    System.event('atomicSwap.completeSwap', Protobuf.encode(new swap.complete_event(swapObj.id, args.secret), swap.complete_event.encode), [swapObj.receiver as Uint8Array]);
 
     return new swap.completeSwap_result(true);
   }
@@ -113,5 +110,9 @@ export class Swap {
     System.event('atomicSwap.cancelSwap', Protobuf.encode(new swap.cancel_event(swapObj.id), swap.cancel_event.encode), [swapObj.creator as Uint8Array]);
 
     return new swap.cancelSwap_result(true);
+  }
+
+  getSwap(id: u64): swap.swap_object {
+    return this._state.getSwap(id);
   }
 }

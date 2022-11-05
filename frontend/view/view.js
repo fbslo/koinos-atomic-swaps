@@ -1,4 +1,5 @@
 let web3;
+let koinosLockTime;
 
 let chainNodes = {
   "bsc": "https://bsc-dataseed1.binance.org/",
@@ -42,6 +43,7 @@ async function load(){
   if (orderId == "5605648565580577177224") chain = "polygon" //for test order
   web3 = new Web3(chainNodes[chain])
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
+  document.getElementById("id").value = orderId
 
   if (window.ethereum.providerChainId == undefined){
     let interval = setInterval(async () => {
@@ -51,6 +53,51 @@ async function load(){
       }
     }, 1000)
   }
+}
+
+async function create(){
+  let details = {
+    creator: document.getElementById("creator").value,
+    receiver: document.getElementById("receiver").value,
+    token: document.getElementById("token").value,
+    amount: document.getElementById("amount").value,
+    id: document.getElementById("id").value,
+    hash: document.getElementById("unlockHash").value,
+    lockTime: koinosLockTime
+  }
+
+  if (details.creator.length == 0){
+    document.getElementById("creator").focus()
+    return;
+  }
+
+  if (details.receiver.length == 0){
+    document.getElementById("receiver").focus()
+    return;
+  }
+
+  if (details.amount.length == 0){
+    document.getElementById("amount").focus()
+    return;
+  }
+
+  const swapContract = new Contract({
+    id: "19emESA1R2kG9tVyHsbqwd4HW9VSoNPdSK",
+    abi: KoinosSwapContractABI,
+    provider: kondor.provider,
+    signer: kondor.signer,
+  });
+
+  const { result } = await swapContract.functions.createSwap({
+    unlockHash: details.hash,
+    creator: details.creator,
+    receiver: details.receiver,
+    token: details.token,
+    amount: details.amount,
+    id: details.id,
+    lockTime: details.lockTime
+  });
+  console.log(result)
 }
 
 async function getEvmSwap(orderId){
@@ -63,11 +110,13 @@ async function getEvmSwap(orderId){
   document.getElementById("evm_token").value = orderInfo.token
   document.getElementById("evm_amount").value = orderInfo.amount / Math.pow(10, decimals) + ` (${orderInfo.amount})`
   document.getElementById("evm_expiration").value = new Date(Number(orderInfo.expiration) * 1000).toString().split("(")[0] + ` (${await countdown(orderInfo.expiration)})`
+  document.getElementById("unlockHash").value = orderInfo.unlockHash
 
   let orderLockTime = orderInfo.expiration - orderInfo.createdAt
-  let koinosLockTime = lockTimes[orderLockTime]
+  koinosLockTime = lockTimes[orderLockTime]
 
   document.getElementById("lockTime").innerText = parseFloat(koinosLockTime / 86000).toFixed(1) + " days"
+  return true;
 }
 
 async function countdown(timestamp){

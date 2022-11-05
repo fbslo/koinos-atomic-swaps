@@ -59,6 +59,7 @@ message swap_object {
   uint64 createdAt  = 7 [jstype = JS_STRING];
   bool finalized = 8;
   uint64 id  = 9 [jstype = JS_STRING];
+  string secret = 10;
 }
 
 //Events
@@ -69,6 +70,7 @@ message create_event {
 
 message complete_event {
   uint64 id = 1 [jstype = JS_STRING];
+  string secret = 2;
 }
 
 message cancel_event {

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./view.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js" integrity="sha512-bSQ2kf76XufUYS/4XinoHLp5S4lNOyRv0/x5UJACiOMy8ueqTNwRFfUZWmWpwnczjRp9SjiF1jrXbGEim7Y0Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="./ABI.js" charset="utf-8"></script>
+    <script src="./kondor.js" charset="utf-8"></script>
     <script src="./view.js" charset="utf-8"></script>
   </head>
   <body onload="load()">
@@ -28,22 +29,22 @@
            <div class="split">
              <form class="" action="index.html" method="post">
                <h1>Koinos</h1><p>
-               <input type="text" name="Creator Address" placeholder="Creator Address"><p>
-               <input type="text" name="Receiver Address" placeholder="Receiver Address"><p>
-               <input type="text" name="Token Address" placeholder="Token Address"><p>
-               <input type="text" name="Token Amount" placeholder="Token Amount"><p>
+               <input type="text" id="creator" name="Creator Address" placeholder="Creator Address"><p>
+               <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address"><p>
+               <input type="text" readonly="readonly" id="token" name="Token Address" placeholder="Token Address" value="19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ"><p>
+               <input type="text" id="amount" name="Token Amount" placeholder="Token Amount"><p>
                <button type="button" class="button buttonTime" id="lockTime">? days</button>
              </form>
            </div>
         </div>
         <div class="center">
           <div class="description">Swap ID</div>
-          <input type="text" name="Swap ID" placeholder="Swap ID"><p>
+          <input type="text" readonly="readonly" id='id' name="Swap ID" placeholder="Swap ID"><p>
             <div class="description">Swap Secret</div>
-          <input type="text" name="Swap Secret" placeholder="Swap Secret"><p>
+          <input type="text" readonly="readonly" name="Swap Secret" placeholder="Swap Secret" value="[N/A]"><p>
             <div class="description">Unlock Hash</div>
-          <input type="text" name="Unlock Hash" placeholder="Unlock Hash"><p>
-          <button class="button buttonCreate">Create</button>
+          <input type="text" readonly="readonly" id='unlockHash' name="Unlock Hash" placeholder="Unlock Hash"><p>
+          <button class="button buttonCreate" onClick="create()">Create</button>
         </div>
 
     <div class="footer">
