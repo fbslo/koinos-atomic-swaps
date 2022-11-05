@@ -1,4 +1,4 @@
-import { chain, System, Base58, Token, Crypto, claim, Arrays, StringBytes, Protobuf } from "@koinos/sdk-as";
+import { chain, System, Base58, Token, Crypto, claim, Arrays, StringBytes, Protobuf, authority } from "@koinos/sdk-as";
 import { swap } from "./proto/swap";
 import { State } from "./State";
 
@@ -6,6 +6,10 @@ import { State } from "./State";
 export class Swap {
   _contractId: Uint8Array;
   _state: State;
+
+  authorize(args: authority.authorize_arguments): authority.authorize_result {
+    return new authority.authorize_result(true);
+  }
 
   constructor() {
     this._contractId = System.getContractId();
@@ -59,7 +63,7 @@ export class Swap {
       return new swap.completeSwap_result(false);
     }
 
-    if (swapObj.finalized != false){
+    if (swapObj.finalized == true){
       System.log("Already finalized");
       return new swap.completeSwap_result(false);
     }
@@ -71,16 +75,16 @@ export class Swap {
       return new swap.completeSwap_result(false);
     }
 
+    swapObj.finalized = true;
+    swapObj.secret = args.secret;
+    this._state.saveSwap(swapObj.id, swapObj);
+
     const token = new Token(swapObj.token!);
 
     if (!token.transfer(this._contractId, swapObj.receiver as Uint8Array, swapObj.amount)) {
       System.log('Token transfer to receiver failed');
       return new swap.completeSwap_result(false);
     }
-
-    swapObj.finalized = true;
-    swapObj.secret = args.secret;
-    this._state.saveSwap(swapObj.id, swapObj);
 
     System.event('atomicSwap.completeSwap', Protobuf.encode(new swap.complete_event(swapObj.id, args.secret), swap.complete_event.encode), [swapObj.receiver as Uint8Array]);
 
@@ -91,15 +95,18 @@ export class Swap {
     const currentTime = System.getHeadInfo().head_block_time;
     const swapObj = this._state.getSwap(args.id);
 
-    if (currentTime <= swapObj.expiration){
+    if (swapObj.expiration > currentTime){
       System.log("Not expired");
       return new swap.cancelSwap_result(false);
     }
 
-    if (swapObj.finalized != false){
+    if (swapObj.finalized == true){
       System.log("Already finalized");
       return new swap.cancelSwap_result(false);
     }
+
+    swapObj.finalized = true;
+    this._state.saveSwap(swapObj.id, swapObj);
 
     const token = new Token(swapObj.token!);
 
@@ -107,9 +114,6 @@ export class Swap {
       System.log('Token transfer to creator failed');
       return new swap.cancelSwap_result(false);
     }
-
-    swapObj.finalized = true;
-    this._state.saveSwap(swapObj.id, swapObj);
 
     System.event('atomicSwap.cancelSwap', Protobuf.encode(new swap.cancel_event(swapObj.id), swap.cancel_event.encode), [swapObj.creator as Uint8Array]);
 
