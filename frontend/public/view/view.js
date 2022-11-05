@@ -29,8 +29,8 @@ async function getContract(id){
   let contracts = {
     "eth": "",     //Mainnet
     "polygon": "0x7c0d63083fDf3AC554eD0B85f08C7Fcb4e1b8Bd1",   //Polygon
-    "avax": "", //Avalanche
-    "bsc": "",   //BSC
+    "avax": "0x23485feaeadee6de0ed8b4c4f88d68e2b0722023", //Avalanche
+    "bsc": "0xa28493579f7204F630BBC975E6Ca8AA27f28c8b5",   //BSC
   }
   return contracts[id]
 }

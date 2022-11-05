@@ -22,16 +22,36 @@ let chainIdentificator = {
   "bsc": "56056",   //BSC
 }
 
+let chainToId = {
+  "eth": "0x1",     //Mainnet
+  "polygon": "0x89",   //Polygon
+  "avax": "0xa86a", //Avalanche
+  "bsc": "0x38",   //BSC
+}
+
 async function getContract(){
   let contracts = {
     "0x1": "",     //Mainnet
     "0x89": "0x7c0d63083fDf3AC554eD0B85f08C7Fcb4e1b8Bd1",   //Polygon
-    "0xA86A": "", //Avalanche
-    "0x38": "",   //BSC
+    "0xa86a": "0x23485feaeadee6de0ed8b4c4f88d68e2b0722023", //Avalanche
+    "0x38": "0xa28493579f7204F630BBC975E6Ca8AA27f28c8b5",   //BSC
   }
-  let chainId = window.ethereum.providerChainId
+  let chain = await getParameterByName("chain")
+  let chainId = window.ethereum.providerChainId ? window.ethereum.providerChainId : window.ethereum.chainId
+  let targetChainId = chainToId[chain]
 
-  return contracts[chainId]
+  if (!chainId){
+    chainId = chainToId[chain]
+  }
+
+  if (chainId.toLowerCase() != targetChainId){
+    await ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: targetChainId }]
+    });
+  }
+
+  return contracts[targetChainId.toLowerCase()]
 }
 
 async function init(){
@@ -50,7 +70,11 @@ async function init(){
 }
 
 async function main(creator, tokenContract, amount){
-  await checkApprovals()
+  let isApproved = await checkApprovals()
+
+  if (!isApproved){
+    return
+  }
 
   let details = {
     creator: document.getElementById("creator").value,
@@ -159,16 +183,16 @@ async function checkApprovals(){
   }
 
 
-  if (utils.toBN(allowance.toString()).lt(utils.toBN(amount.toString()))){
+  if (utils.toBN(amount.toString()).gt(utils.toBN(allowance.toString()))){
     if (isPending != true) {
       document.getElementById("action-button").innerText = "Approve"
-      document.getElementById("action-button").onClick = function() { approve(creator, tokenContract, amount) };
+      document.getElementById("action-button").onclick = function() { approve(creator, tokenContract, amount.toString()) };
     }
     return false;
   } else {
     isPending = false;
     document.getElementById("action-button").innerText = "Create"
-    document.getElementById("action-button").onClick =  function() { main(creator, tokenContract, amount) };
+    document.getElementById("action-button").onclick =  function() { main(creator, tokenContract, amount.toString()) };
     return true;
   }
 }
@@ -191,6 +215,16 @@ async function approve(user, tokenContract, amount){
   isPending = true;
   document.getElementById("action-button").innerHTML = `<i class="fa fa-refresh fa-spin"></i> Approving`
 	console.log(txHash)
+
+  let interval = setInterval(async () => {
+    let txReceipt = await web3.eth.getTransactionReceipt(txHash)
+    if (txReceipt && txReceipt.blockNumber){
+      clearInterval(interval)
+      isPending = false;
+      document.getElementById("action-button").innerText = "Create"
+      document.getElementById("action-button").onclick =  function() { main(creator, tokenContract, amount.toString()) };
+    }
+  }, 5000)
 }
 
 async function connectMetamask(){

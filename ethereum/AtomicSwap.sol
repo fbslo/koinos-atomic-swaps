@@ -62,7 +62,7 @@ contract HTLC {
     if (swaps[id].creator != address(0)) revert IdNotUnique(id);
     if (receiver == address(0)) revert AddressZero();
 
-    swaps[id] = Swap(unlockHash, msg.sender, receiver, token, amount, uint64(block.timestamp + lockTime), uint64(block.timestamp), false);
+    swaps[id] = Swap(unlockHash, msg.sender, receiver, token, amount, uint64(block.timestamp + lockTime), uint64(block.timestamp), false, "");
 
     IERC20(token).transferFrom(msg.sender, address(this), amount);
     emit SwapCreated(id);
