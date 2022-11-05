@@ -74,7 +74,7 @@ contract HTLC {
    * @param secret String that was used to create a unlockHash
    */
   function completeSwap(uint256 id, string memory secret) external {
-    if (swaps[id].expiration >= block.timestamp) revert Expired();
+    if (swaps[id].expiration <= block.timestamp) revert Expired();
     if (swaps[id].finalized == true) revert AlreadyFinalized();
     if (keccak256(abi.encodePacked(secret)) != swaps[id].unlockHash) revert InvalidSecret();
 
