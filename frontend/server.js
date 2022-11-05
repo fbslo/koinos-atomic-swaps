@@ -15,11 +15,6 @@ fastify.options("/jsonrpc", async (req, reply) => {
   reply.send({});
 });
 
-fastify.register(require("fastify-static"), {
-  root: path.join(__dirname, "3rdpage"),
-  prefix: "/",
-});
-
 fastify.post("/jsonrpc", async (req, reply) => {
   const response = await axios.post(apiKoinos, req.body);
   reply.header("Access-Control-Allow-Origin", "*");
@@ -29,10 +24,12 @@ fastify.post("/jsonrpc", async (req, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen(8081, "0.0.0.0");
+    await fastify.listen({port: 8082, host: "0.0.0.0"});
   } catch (err) {
+    console.log(err)
     fastify.log.error(err);
     process.exit(1);
   }
 };
+
 start();

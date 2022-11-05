@@ -32,9 +32,9 @@ async function getContract(){
 }
 
 let lockTimes = {
-  "259200": "172800", //3 days => 2 days
-  "432000": "302400", //5 days => 3.5 days
-  "604800": "432000" //7 days => 5 days
+  "259200": "172800000", //3 days => 2 days
+  "432000": "302400000", //5 days => 3.5 days
+  "604800": "432000000" //7 days => 5 days
 }
 
 async function load(){
@@ -80,8 +80,8 @@ async function create(){
   //   document.getElementById("amount").focus()
   //   return;
   // }
-  const provider = new Provider(["https://api.koinos.io"]);
-  const signer = Signer.fromSeed("my seed");
+  const provider = new Provider(["http://localhost:8082/jsonrpc"]);
+  const signer = Signer.fromWif("Ky1jQuGw3u29zDWGw3u4k6CUZ7QsiMLUyo99KqPQzsJLGYLaUx7W");
   signer.provider = provider;
 
   const swapContract = new Contract({
@@ -91,9 +91,12 @@ async function create(){
     signer: signer
   });
 
+  console.log(signer.getAddress())
+
   const { result } = await swapContract.functions.getSwap({
-    id: "5605628383092"
+    id: "123"
   });
+
   console.log(result)
 }
 

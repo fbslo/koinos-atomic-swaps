@@ -53,6 +53,7 @@ export class Swap {
   completeSwap(args: swap.completeSwap_arguments): swap.completeSwap_result {
     const currentTime = System.getHeadInfo().head_block_time;
     const swapObj = this._state.getSwap(args.id);
+    const unlockHash = swapObj.unlockHash as String;
 
     if (currentTime > swapObj.expiration){
       System.log("Expired");
@@ -66,7 +67,7 @@ export class Swap {
 
     const secretHash = System.hash(Crypto.multicodec.keccak_256, StringBytes.stringToBytes(args.secret!));
 
-    if (secretHash != swapObj.unlockHash){
+    if (Arrays.toHexString(secretHash!, false).slice(4) != unlockHash){
       System.log("Invalid secret");
       return new swap.completeSwap_result(false);
     }

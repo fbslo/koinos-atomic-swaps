@@ -36,7 +36,7 @@
                     "createSwap_arguments": {
                         "fields": {
                             "unlockHash": {
-                                "type": "bytes",
+                                "type": "string",
                                 "id": 1
                             },
                             "creator": {
@@ -150,7 +150,7 @@
                     "getSwap_result": {
                         "fields": {
                             "unlockHash": {
-                                "type": "bytes",
+                                "type": "string",
                                 "id": 1
                             },
                             "creator": {
@@ -215,7 +215,7 @@
                     "swap_object": {
                         "fields": {
                             "unlockHash": {
-                                "type": "bytes",
+                                "type": "string",
                                 "id": 1
                             },
                             "creator": {

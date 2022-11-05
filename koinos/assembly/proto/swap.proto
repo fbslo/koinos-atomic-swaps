@@ -9,7 +9,7 @@ import "koinos/options.proto";
    @read-only false
 */
 message createSwap_arguments {
-  bytes unlockHash = 1;
+  string unlockHash = 1;
   bytes creator = 2 [(koinos.btype) = ADDRESS];
   bytes receiver = 3 [(koinos.btype) = ADDRESS];
   bytes token = 4 [(koinos.btype) = ADDRESS];
@@ -56,7 +56,7 @@ message getSwap_arguments {
 }
 
 message getSwap_result {
-  bytes unlockHash = 1;
+  string unlockHash = 1;
   bytes creator = 2 [(koinos.btype) = ADDRESS];
   bytes receiver = 3 [(koinos.btype) = ADDRESS];
   bytes token = 4 [(koinos.btype) = ADDRESS];
@@ -71,7 +71,7 @@ message getSwap_result {
 //Objects
 
 message swap_object {
-  bytes unlockHash = 1;
+  string unlockHash = 1;
   bytes creator = 2 [(koinos.btype) = ADDRESS];
   bytes receiver = 3 [(koinos.btype) = ADDRESS];
   bytes token = 4 [(koinos.btype) = ADDRESS];

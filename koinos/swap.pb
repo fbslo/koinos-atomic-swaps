@@ -4,7 +4,7 @@
 assembly/proto/swap.protoswapkoinos/options.proto"ä
 createSwap_arguments
 
-unlockHash (R
+unlockHash (	R
 unlockHash
 creator (B€µRcreator 
 receiver (B€µRreceiver
@@ -27,7 +27,7 @@ unlockHash
 id (B0Rid"º
 getSwap_result
 
-unlockHash (R
+unlockHash (	R
 unlockHash
 creator (B€µRcreator 
 receiver (B€µRreceiver
@@ -43,7 +43,7 @@ expiration
  (	Rsecret"·
 swap_object
 
-unlockHash (R
+unlockHash (	R
 unlockHash
 creator (B€µRcreator 
 receiver (B€µRreceiver
