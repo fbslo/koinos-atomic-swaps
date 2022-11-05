@@ -2,6 +2,9 @@ let web3;
 let koinosLockTime;
 let koinosTxCreated = false;
 
+let swapContract;
+let swapContractEvm;
+
 let chainNodes = {
   "bsc": "https://bsc-dataseed1.binance.org/",
   "polygon": "https://polygon-rpc.com/",
@@ -49,11 +52,18 @@ async function load(){
 
   getEvmSwap(orderId, chain)
 
-  let provider = new Provider(["http://localhost:8082/jsonrpc"]);
-  let signer = Signer.fromWif("5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ"); //random private key, do not use
-  signer.provider = provider;
+  let provider;
+  let signer;
+  if (kondor.provider) {
+    provider = kondor.provider
+    signer = await kondor.getSigner()
+  } else {
+    provider = new Provider(["http://localhost:8082/jsonrpc"]);
+    signer = Signer.fromWif("5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ");
+    signer.provider = provider;
+  }
 
-  const swapContract = new Contract({
+  swapContract = new Contract({
     id: "1CompCapuSTiLo8gfpygN79M18kyKEaBwj",
     abi: KoinosSwapContractABI,
     provider: provider,
@@ -73,6 +83,13 @@ async function load(){
     document.getElementById("expiration").innerHTML = `<input type="text" readonly="readonly" id="koinos_expiration" name="Expiration" placeholder="Expiration"><p>`
     let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
+
+    //both trades were initialized, now they can be released
+    if (result.secret && result.secret.length > 0){
+      release(orderId, "evm")
+    } else {
+      release(orderId, "koinos", result.secret)
+    }
   }
 }
 
@@ -102,26 +119,6 @@ async function create(){
     return;
   }
 
-  let provider;
-  let signer;
-  if (kondor.provider) {
-    provider = kondor.provider
-    signer = await kondor.getSigner()
-  } else {
-    provider = new Provider(["http://localhost:8082/jsonrpc"]);
-    signer = Signer.fromWif("5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ");
-    signer.provider = provider;
-  }
-
-  console.log(provider)
-
-  const swapContract = new Contract({
-    id: "1CompCapuSTiLo8gfpygN79M18kyKEaBwj",
-    abi: KoinosSwapContractABI,
-    provider: provider,
-    signer: signer
-  });
-
   const { result } = await swapContract.functions.createSwap({
     unlockHash: details.hash,
     creator: details.creator,
@@ -130,6 +127,8 @@ async function create(){
     amount: details.amount,
     id: details.id,
     lockTime: details.lockTime,
+  }, {
+    rcLimit: 100000
   });
 
   Swal.fire(
@@ -143,8 +142,8 @@ async function create(){
 
 async function getEvmSwap(orderId, chain){
   let swapContractAddress = await getContract(chain)
-  let swapContract = new web3.eth.Contract(SwapABI, swapContractAddress);
-  let orderInfo = await swapContract.methods.swaps(orderId).call()
+  swapContractEvm = new web3.eth.Contract(SwapABI, swapContractAddress);
+  let orderInfo = await swapContractEvm.methods.swaps(orderId).call()
   let decimals = await (new web3.eth.Contract(ABI, orderInfo.token)).methods.decimals().call()
 
   document.getElementById("evm_creator").value = orderInfo.creator
@@ -161,6 +160,53 @@ async function getEvmSwap(orderId, chain){
   }
 
   return true;
+}
+
+async function release(id, side, secret){
+  document.getElementById("secret").value = ""
+  document.getElementById("secret").readOnly = false
+  document.getElementById("mainButton").innerText = "Release"
+  document.getElementById("mainButton").onClick = function(){
+    if (side == "koinos") releaseKoinos(id)
+    if (side == "evm") releaseEvm(id, secret)
+  }
+}
+
+async function releaseKoinos(id){
+  const { result } = await swapContract.functions.completeSwap({
+    id: id,
+    secret: document.getElementById("secret").value
+  }, {
+    rcLimit: 100000
+  });
+
+  Swal.fire(
+    'Congratulations!',
+    'Transaction was sent: '+ txHash,
+    'success'
+  )
+
+  console.log(result)
+}
+
+async function releaseEvm(id, secret){
+  let data = await swapContractEvm.methods.completeSwap(orderId, secret).encodeABI()
+
+  const transactionParameters = {
+		to: await getContract(), // Required except during contract publications.
+		from: await connectMetamask(), // must match user's active address.
+		data: data, // Optional, but used for defining smart contract creation and interaction.
+	};
+
+	const txHash = await ethereum.request({
+		method: 'eth_sendTransaction',
+		params: [transactionParameters],
+	});
+  Swal.fire(
+    'Congratulations!',
+    'Transaction was sent: '+ txHash,
+    'success'
+  )
 }
 
 async function countdown(timestamp){
@@ -181,4 +227,13 @@ function getParameterByName(name, url = window.location.href) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+async function connectMetamask(){
+	if (typeof window.ethereum !== 'undefined') {
+		let accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+		return accounts[0];
+	} else {
+		alert("MetaMask is not installed!")
+	}
 }
