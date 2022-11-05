@@ -44,13 +44,10 @@ let lockTimes = {
 async function load(){
   let orderId = getParameterByName("id")
   let chain = chainIdentificator[orderId.slice(0, 5)]
-  if (orderId == "5605648565580577177224") chain = "polygon" //for test order
   web3 = new Web3(chainNodes[chain])
 
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
   document.getElementById("id").value = orderId
-
-  // getEvmSwap(orderId, chain)
 
   let provider;
   let signer;
@@ -69,6 +66,8 @@ async function load(){
     provider: provider,
     signer: signer
   });
+
+  getEvmSwap(orderId, chain, swapContract)
 
   const { result } = await swapContract.functions.getSwap({
     id: orderId
@@ -142,7 +141,7 @@ async function create(){
   console.log(result)
 }
 
-async function getEvmSwap(orderId, chain){
+async function getEvmSwap(orderId, chain, koinosSwapContract){
   let swapContractAddress = await getContract(chain)
   swapContractEvm = new web3.eth.Contract(SwapABI, swapContractAddress);
   let orderInfo = await swapContractEvm.methods.swaps(orderId).call()
@@ -161,7 +160,26 @@ async function getEvmSwap(orderId, chain){
     document.getElementById("lockTime").innerText = parseFloat(koinosLockTime / 86000).toFixed(1) + " days"
   }
 
+  if (orderInfo.finalized){
+    checkIfCompleted(koinosSwapContract, orderId)
+  }
+
   return true;
+}
+
+async function checkIfCompleted(koinosSwapContract, orderId){
+  const { result } = await swapContract.functions.getSwap({
+    id: orderId
+  });
+
+  if (result.finalized){
+    document.getElementById("mainButton").innerText = 'Completed'
+    document.getElementById("mainButton").classList.add("complete-button");
+    document.getElementById("mainButton").onclick = false;
+
+    document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
+    document.getElementById("evm-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
+  }
 }
 
 async function release(id, side, secret){

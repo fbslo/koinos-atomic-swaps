@@ -106,3 +106,7 @@ input:focus {
   border: 2px solid #555555;
   padding: 10px 20px;
 }
+
+.complete-button:hover {
+  background-color: #55efc4;
+}
