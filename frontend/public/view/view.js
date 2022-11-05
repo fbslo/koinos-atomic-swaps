@@ -85,7 +85,7 @@ async function create(){
   signer.provider = provider;
 
   const swapContract = new Contract({
-    id: "19emESA1R2kG9tVyHsbqwd4HW9VSoNPdSK",
+    id: "1CompCapuSTiLo8gfpygN79M18kyKEaBwj",
     abi: KoinosSwapContractABI,
     provider: provider,
     signer: signer
@@ -93,8 +93,8 @@ async function create(){
 
   console.log(signer.getAddress())
 
-  const { result } = await swapContract.functions.getSwap({
-    id: "123"
+  const result = await swapContract.functions.getSwap({
+    id: "10"
   });
 
   console.log(result)
