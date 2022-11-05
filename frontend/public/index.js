@@ -19,6 +19,16 @@ let idInputBox = `
 async function load(){
   let content = document.getElementById("content")
   content.innerHTML = buttons
+
+  if (!window.localStorage.getItem('disclaimer') || new Date().getTime() - window.localStorage.getItem('disclaimer') > 604800000){
+    Swal.fire(
+      'Warning',
+      'This app is still under development!<p>Use at your own risk!',
+      'warning'
+    ).then(() => {
+      window.localStorage.setItem('disclaimer', new Date().getTime());
+    })
+  }
 }
 
 async function showSelectChain(){
