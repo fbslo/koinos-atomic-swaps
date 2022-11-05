@@ -108,3 +108,23 @@ input:focus {
   background-color: #25174E;
   color: white;
 }
+
+.faq {
+  width: 100%;
+}
+
+.faq-q {
+  font-size: 18px;
+}
+
+.faq-a {
+  font-style: italic;
+}
+
+.no-decoration {
+  text-decoration: none;
+}
+
+.bold {
+  font-weight: bold;
+}

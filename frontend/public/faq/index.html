@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Hashed Timelock Contract - Koinos - EVM</title>
+    <link rel="icon" type="image/x-icon" href="./icon.png">
+    <link href='https://fonts.googleapis.com/css?family=Fira%20Code' rel='stylesheet'>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js" integrity="sha512-bSQ2kf76XufUYS/4XinoHLp5S4lNOyRv0/x5UJACiOMy8ueqTNwRFfUZWmWpwnczjRp9SjiF1jrXbGEim7Y0Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./create/ABI.js" charset="utf-8"></script>
+    <script src="./create/create.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./create/create.css">
+  </head>
+  <body onLoad="init()">
+    <div class="main">
+      <div style="width: 100%;">
+         <div class="split">
+           <form class="" action="" method="post">
+             <a href="/" style="text-decoration:none;color:black;">[back]</a><p>
+             <div class="large-title" id="chain-title">Frequently Asked Questions</div><p><br>
+             <div class='faq'>
+               <span class="faq-q">What are Atomic Swaps?</span><p>
+               <span class="faq-a">An atomic swap is a trustless exchange of cryptocurrencies from separate blockchains.<br>
+                 It uses Hashed Timelock Contract (HTLC) to lock assets on different blockchains and<br> will only release them on either both sides or the swap fails.
+                 Learn more <a href="https://www.bitpanda.com/academy/en/lessons/what-is-an-atomic-swap/" class="no-decoration" target="_blank">[here]</a>.
+               </span><p>
+                 <span class="faq-q">Which blockchains are supported?</span><p>
+                 <span class="faq-a">Currently, we supports Koinos and these EVM chains: BNB Smart Chain & Polygon & Avalance C-chain.</span><p>
+                 <span class="faq-q">How to create an Atomic Swap?</span><p>
+                 <span class="faq-a">
+
+                   Traders must first come to an agreement about the trade and must have some way to communicate.<br><br>
+                   1) Trader A will initialize a swap on EVM chain. EVM-side trade is <span class="bold">always</span> first to be initialized.<br>
+                   He will receive Swap ID and Swap Secret, and will store the secret securely.<br><br>
+                   2) Once trader A is finished, he will send Swap ID to trader B, who will then verify trader A's details, <br>
+                   and it he agreees, will use it to create a Swap on Koinos.<br><br>
+                   3) Once trader B is finished, he will notify A, who will then verify B's details, and if he agrees, will use the Swap Secret to unlock<br>
+                   and release KOIN on Koinos. Since all blockchain data is public, this will reveal the secret to everyone.<br><br>
+                   4) Trader B will now use the secret to unlock the Swap on BSC and release his BUSD.
+                 </span><p>
+             </div>
+           </form>
+         </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Created by <a href="https://twitter.com/fbsloXBT" style="text-decoration:none;color:black;" target="_blank">@fbsloXBT</a></p>
+    </div>
+  </body>
+</html>

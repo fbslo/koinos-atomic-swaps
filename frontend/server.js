@@ -24,18 +24,6 @@ fastify.post("/jsonrpc", async (req, reply) => {
   reply.send(response.data);
 });
 
-// fastify.get('/', function (req, reply) {
-//   reply.sendFile('./public/index.html')
-// })
-//
-// fastify.get('/create', function (req, reply) {
-//   reply.sendFile('./public/create/index.html')
-// })
-//
-// fastify.get('/view', function (req, reply) {
-//   reply.sendFile('./public/view/index.html')
-// })
-
 fastify.register(require("@fastify/static"), {
   root: path.join(__dirname, "public"),
   prefix: "/",
