@@ -32,9 +32,9 @@ let chainToId = {
 async function getContract(){
   let contracts = {
     "0x1": "",     //Mainnet
-    "0x89": "0x7c0d63083fDf3AC554eD0B85f08C7Fcb4e1b8Bd1",   //Polygon
-    "0xa86a": "0x23485feaeadee6de0ed8b4c4f88d68e2b0722023", //Avalanche
-    "0x38": "0xa28493579f7204F630BBC975E6Ca8AA27f28c8b5",   //BSC
+    "0x89": "",   //Polygon
+    "0xa86a": "", //Avalanche
+    "0x38": "",   //BSC
   }
   let chain = await getParameterByName("chain")
   let chainId = window.ethereum.providerChainId ? window.ethereum.providerChainId : window.ethereum.chainId
