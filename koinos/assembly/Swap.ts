@@ -28,10 +28,7 @@ export class Swap {
 
     const token = new Token(args.token!);
 
-    if (!token.transfer(creator, this._contractId, args.amount)) {
-      System.log("Token transfer from creator failed");
-      return res;
-    }
+    System.require(token.transfer(creator, this._contractId, args.amount), "Token transfer from creator failed");
 
     const newSwap = new swap.swap_object(
       args.unlockHash!,
@@ -81,10 +78,7 @@ export class Swap {
 
     const token = new Token(swapObj.token!);
 
-    if (!token.transfer(this._contractId, swapObj.receiver as Uint8Array, swapObj.amount)) {
-      System.log('Token transfer to receiver failed');
-      return new swap.completeSwap_result(false);
-    }
+    System.require(token.transfer(this._contractId, swapObj.receiver as Uint8Array, swapObj.amount), "Token transfer from creator failed");
 
     System.event('atomicSwap.completeSwap', Protobuf.encode(new swap.complete_event(swapObj.id, args.secret), swap.complete_event.encode), [swapObj.receiver as Uint8Array]);
 
@@ -110,10 +104,7 @@ export class Swap {
 
     const token = new Token(swapObj.token!);
 
-    if (!token.transfer(this._contractId, swapObj.creator as Uint8Array, swapObj.amount)) {
-      System.log('Token transfer to creator failed');
-      return new swap.cancelSwap_result(false);
-    }
+    System.require(token.transfer(this._contractId, swapObj.creator as Uint8Array, swapObj.amount), "Token transfer from creator failed");
 
     System.event('atomicSwap.cancelSwap', Protobuf.encode(new swap.cancel_event(swapObj.id), swap.cancel_event.encode), [swapObj.creator as Uint8Array]);
 

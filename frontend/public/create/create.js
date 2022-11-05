@@ -12,7 +12,7 @@ function uuidv4(a){return a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-
 let chains = {
   "bsc": "BSC",
   "polygon": "Polygon",
-  "avax": "Avalance"
+  "avax": "Avalanche"
 }
 
 let chainIdentificator = {
