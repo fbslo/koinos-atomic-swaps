@@ -28,9 +28,9 @@ let chainNames = {
 async function getContract(id){
   let contracts = {
     "eth": "",     //Mainnet
-    "polygon": "",   //Polygon
-    "avax": "", //Avalanche
-    "bsc": "",   //BSC
+    "polygon": "0xB4fcA931C5337B5ce924C6Ac87BD82b604dcdB51",   //Polygon
+    "avax": "0xB4fcA931C5337B5ce924C6Ac87BD82b604dcdB51", //Avalanche
+    "bsc": "0xB4fcA931C5337B5ce924C6Ac87BD82b604dcdB51",   //BSC
   }
   return contracts[id]
 }
