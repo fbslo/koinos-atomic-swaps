@@ -80,12 +80,15 @@ async function create(){
   //   document.getElementById("amount").focus()
   //   return;
   // }
+  const provider = new Provider(["https://api.koinos.io"]);
+  const signer = Signer.fromSeed("my seed");
+  signer.provider = provider;
 
   const swapContract = new Contract({
     id: "19emESA1R2kG9tVyHsbqwd4HW9VSoNPdSK",
     abi: KoinosSwapContractABI,
-    provider: kondor.provider,
-    signer: kondor.signer,
+    provider: provider,
+    signer: signer
   });
 
   const { result } = await swapContract.functions.getSwap({
