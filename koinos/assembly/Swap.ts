@@ -112,7 +112,19 @@ export class Swap {
     return new swap.cancelSwap_result(true);
   }
 
-  getSwap(id: u64): swap.swap_object {
-    return this._state.getSwap(id);
+  getSwap(args: swap.getSwap_arguments): swap.getSwap_result {
+    let swapObj = this._state.getSwap(args.id);
+    return new swap.getSwap_result(
+      swapObj.unlockHash,
+      swapObj.creator,
+      swapObj.receiver,
+      swapObj.token,
+      swapObj.amount,
+      swapObj.expiration,
+      swapObj.createdAt,
+      swapObj.finalized,
+      swapObj.id,
+      swapObj.secret
+    );
   }
 }

@@ -56,30 +56,30 @@ async function load(){
 }
 
 async function create(){
-  let details = {
-    creator: document.getElementById("creator").value,
-    receiver: document.getElementById("receiver").value,
-    token: document.getElementById("token").value,
-    amount: document.getElementById("amount").value,
-    id: document.getElementById("id").value,
-    hash: document.getElementById("unlockHash").value,
-    lockTime: koinosLockTime
-  }
-
-  if (details.creator.length == 0){
-    document.getElementById("creator").focus()
-    return;
-  }
-
-  if (details.receiver.length == 0){
-    document.getElementById("receiver").focus()
-    return;
-  }
-
-  if (details.amount.length == 0){
-    document.getElementById("amount").focus()
-    return;
-  }
+  // let details = {
+  //   creator: document.getElementById("creator").value,
+  //   receiver: document.getElementById("receiver").value,
+  //   token: document.getElementById("token").value,
+  //   amount: document.getElementById("amount").value,
+  //   id: document.getElementById("id").value,
+  //   hash: document.getElementById("unlockHash").value,
+  //   lockTime: koinosLockTime
+  // }
+  //
+  // if (details.creator.length == 0){
+  //   document.getElementById("creator").focus()
+  //   return;
+  // }
+  //
+  // if (details.receiver.length == 0){
+  //   document.getElementById("receiver").focus()
+  //   return;
+  // }
+  //
+  // if (details.amount.length == 0){
+  //   document.getElementById("amount").focus()
+  //   return;
+  // }
 
   const swapContract = new Contract({
     id: "19emESA1R2kG9tVyHsbqwd4HW9VSoNPdSK",
@@ -88,14 +88,8 @@ async function create(){
     signer: kondor.signer,
   });
 
-  const { result } = await swapContract.functions.createSwap({
-    unlockHash: details.hash,
-    creator: details.creator,
-    receiver: details.receiver,
-    token: details.token,
-    amount: details.amount,
-    id: details.id,
-    lockTime: details.lockTime
+  const { result } = await swapContract.functions.getSwap({
+    id: "5605628383092"
   });
   console.log(result)
 }

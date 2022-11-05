@@ -20,6 +20,13 @@
             "description": "Cancel a Swap transaction",
             "entryPoint": 280700488,
             "readOnly": false
+        },
+        "getSwap": {
+            "input": "swap.getSwap_arguments",
+            "output": "swap.getSwap_result",
+            "description": "Get a Swap transaction object",
+            "entryPoint": 931555731,
+            "readOnly": true
         }
     },
     "types": {
@@ -126,6 +133,82 @@
                             "result": {
                                 "type": "bool",
                                 "id": 1
+                            }
+                        }
+                    },
+                    "getSwap_arguments": {
+                        "fields": {
+                            "id": {
+                                "type": "uint64",
+                                "id": 1,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            }
+                        }
+                    },
+                    "getSwap_result": {
+                        "fields": {
+                            "unlockHash": {
+                                "type": "bytes",
+                                "id": 1
+                            },
+                            "creator": {
+                                "type": "bytes",
+                                "id": 2,
+                                "options": {
+                                    "(koinos.btype)": "ADDRESS"
+                                }
+                            },
+                            "receiver": {
+                                "type": "bytes",
+                                "id": 3,
+                                "options": {
+                                    "(koinos.btype)": "ADDRESS"
+                                }
+                            },
+                            "token": {
+                                "type": "bytes",
+                                "id": 4,
+                                "options": {
+                                    "(koinos.btype)": "ADDRESS"
+                                }
+                            },
+                            "amount": {
+                                "type": "uint64",
+                                "id": 5,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "expiration": {
+                                "type": "uint64",
+                                "id": 6,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "createdAt": {
+                                "type": "uint64",
+                                "id": 7,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "finalized": {
+                                "type": "bool",
+                                "id": 8
+                            },
+                            "id": {
+                                "type": "uint64",
+                                "id": 9,
+                                "options": {
+                                    "jstype": "JS_STRING"
+                                }
+                            },
+                            "secret": {
+                                "type": "string",
+                                "id": 10
                             }
                         }
                     },

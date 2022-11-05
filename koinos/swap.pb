@@ -1,5 +1,6 @@
 
-Ý
+Ã
+
 assembly/proto/swap.protoswapkoinos/options.proto"ä
 createSwap_arguments
 
@@ -21,7 +22,25 @@ unlockHash
 cancelSwap_arguments
 id (B0Rid"+
 cancelSwap_result
-result (Rresult"·
+result (Rresult"'
+getSwap_arguments
+id (B0Rid"º
+getSwap_result
+
+unlockHash (R
+unlockHash
+creator (B€µRcreator 
+receiver (B€µRreceiver
+token (B€µRtoken
+amount (B0Ramount"
+
+expiration (B0R
+expiration 
+	createdAt (B0R	createdAt
+	finalized (R	finalized
+id	 (B0Rid
+secret
+ (	Rsecret"·
 swap_object
 
 unlockHash (R

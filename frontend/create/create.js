@@ -3,7 +3,7 @@ let lastSent;
 let isPending = false;
 let isDownloaded = false
 let min = 0
-let max = 100000000000000000
+let max = 10000000000000
 let lockTime = 604800 //7 days
 let decimals = 0;
 
