@@ -2,17 +2,14 @@ import { chain, System, Base58, Token, Crypto, claim, Arrays, StringBytes, Proto
 import { swap } from "./proto/swap";
 import { State } from "./State";
 
-const TOKEN_CONTRACT_ID = Base58.decode('19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ');
 
 export class Swap {
   _contractId: Uint8Array;
   _state: State;
-  _token: Token;
 
   constructor() {
     this._contractId = System.getContractId();
     this._state = new State(this._contractId);
-    this._token = new Token(TOKEN_CONTRACT_ID);
   }
 
   createSwap(args: swap.createSwap_arguments): swap.createSwap_result {
@@ -25,21 +22,23 @@ export class Swap {
       return res;
     }
 
-    if (!this._token.transfer(creator, this._contractId, args.amount)) {
+    const token = new Token(args.token!);
+
+    if (!token.transfer(creator, this._contractId, args.amount)) {
       System.log("Token transfer from creator failed");
       return res;
     }
 
     const newSwap = new swap.swap_object(
-      args.unlockHash,
-      args.creator,
-      args.receiver,
-      args.token,
+      args.unlockHash!,
+      args.creator!,
+      args.receiver!,
+      args.token!,
       args.amount,
       System.getHeadInfo().head_block_time + args.lockTime,
       System.getHeadInfo().head_block_time,
       false,
-      args.id,
+      id,
       ""
     );
     this._state.saveSwap(id, newSwap);
@@ -72,7 +71,9 @@ export class Swap {
       return new swap.completeSwap_result(false);
     }
 
-    if (!this._token.transfer(this._contractId, swapObj.receiver as Uint8Array, swapObj.amount)) {
+    const token = new Token(swapObj.token!);
+
+    if (!token.transfer(this._contractId, swapObj.receiver as Uint8Array, swapObj.amount)) {
       System.log('Token transfer to receiver failed');
       return new swap.completeSwap_result(false);
     }
@@ -100,7 +101,9 @@ export class Swap {
       return new swap.cancelSwap_result(false);
     }
 
-    if (!this._token.transfer(this._contractId, swapObj.creator as Uint8Array, swapObj.amount)) {
+    const token = new Token(swapObj.token!);
+
+    if (!token.transfer(this._contractId, swapObj.creator as Uint8Array, swapObj.amount)) {
       System.log('Token transfer to creator failed');
       return new swap.cancelSwap_result(false);
     }
