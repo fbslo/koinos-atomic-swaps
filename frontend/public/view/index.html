@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <title>Hashed Timelock Contract - Koinos - EVM</title>
     <link href='https://fonts.googleapis.com/css?family=Fira%20Code' rel='stylesheet'>
-    <link rel="stylesheet" href="./view.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.0/web3.min.js" integrity="sha512-bSQ2kf76XufUYS/4XinoHLp5S4lNOyRv0/x5UJACiOMy8ueqTNwRFfUZWmWpwnczjRp9SjiF1jrXbGEim7Y0Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="./ABI.js" charset="utf-8"></script>
-    <script src="./kondor.js" charset="utf-8"></script>
-    <script src="./koinos.js" charset="utf-8"></script>
-    <script src="./view.js" charset="utf-8"></script>
+    <script src="./view/ABI.js" charset="utf-8"></script>
+    <script src="./view/kondor.js" charset="utf-8"></script>
+    <script src="./view/koinos.js" charset="utf-8"></script>
+    <script src="./view/view.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="./view/view.css">
   </head>
   <body onload="load()">
     <div class="main">
@@ -20,7 +21,7 @@
           <div class="small-title">Create transaction on</div> <div class="large-title" id="chain-title">Koinos</div><p>
            <div class="split">
              <form class="" action="index.html" method="post">
-               <h1 id='counterpartyChain'>BSC</h1><p>
+               <h1><span id='counterpartyChain'>BSC</span> <span id="evm-checkmark"></span></h1><p>
                <input type="text" readonly="readonly" id="evm_creator" name="Creator Address" placeholder="Creator Address"><p>
                <input type="text" readonly="readonly" id="evm_receiver" name="Receiver Address" placeholder="Receiver Address"><p>
                <input type="text" readonly="readonly" id="evm_token" name="Token Address" placeholder="Token Address"><p>
@@ -30,7 +31,7 @@
            </div>
            <div class="split">
              <form class="" action="index.html" method="post">
-               <h1>Koinos</h1><p>
+               <h1>Koinos <span id="koinos-checkmark"></span></h1><p>
                <input type="text" id="creator" name="Creator Address" placeholder="Creator Address"><p>
                <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address"><p>
                <input type="text" readonly="readonly" id="token" name="Token Address" placeholder="Token Address" value="19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ"><p>

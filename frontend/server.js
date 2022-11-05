@@ -1,3 +1,5 @@
+//Proxy by @joticajulian: https://github.com/joticajulian/kondor/blob/main/server.js
+
 const fastify = require("fastify")({ logger: true });
 const path = require("path");
 const axios = require("axios");
@@ -22,11 +24,27 @@ fastify.post("/jsonrpc", async (req, reply) => {
   reply.send(response.data);
 });
 
+// fastify.get('/', function (req, reply) {
+//   reply.sendFile('./public/index.html')
+// })
+//
+// fastify.get('/create', function (req, reply) {
+//   reply.sendFile('./public/create/index.html')
+// })
+//
+// fastify.get('/view', function (req, reply) {
+//   reply.sendFile('./public/view/index.html')
+// })
+
+fastify.register(require("@fastify/static"), {
+  root: path.join(__dirname, "public"),
+  prefix: "/",
+});
+
 const start = async () => {
   try {
-    await fastify.listen({port: 8082, host: "0.0.0.0"});
+    await fastify.listen({port: 8080, host: "0.0.0.0"});
   } catch (err) {
-    console.log(err)
     fastify.log.error(err);
     process.exit(1);
   }

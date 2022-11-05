@@ -50,7 +50,7 @@ async function load(){
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
   document.getElementById("id").value = orderId
 
-  getEvmSwap(orderId, chain)
+  // getEvmSwap(orderId, chain)
 
   let provider;
   let signer;
@@ -58,7 +58,7 @@ async function load(){
     provider = kondor.provider
     signer = await kondor.getSigner()
   } else {
-    provider = new Provider(["http://localhost:8082/jsonrpc"]);
+    provider = new Provider([window.location.origin+"/jsonrpc"]);
     signer = Signer.fromWif("5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ");
     signer.provider = provider;
   }
@@ -84,10 +84,12 @@ async function load(){
     let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
 
-    //both trades were initialized, now they can be released
+    // both trades were initialized, now the secret can be released
     if (result.secret && result.secret.length > 0){
+      document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
       release(orderId, "evm")
     } else {
+      document.getElementById("evm-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
       release(orderId, "koinos", result.secret)
     }
   }
@@ -217,7 +219,7 @@ async function countdown(timestamp){
   let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-  return days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
+  return days + "d " + hours + "h "+ minutes + "m " + seconds + "s";
 }
 
 function getParameterByName(name, url = window.location.href) {

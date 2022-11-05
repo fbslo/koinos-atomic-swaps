@@ -7,18 +7,14 @@ Ethereum Swap must be created first;
 
 ```
 {
-  secretHash: "",
-  receiverAddress: "",
+  unlockHash: "",
+  receiver: "",
+  creator: "",
   token: "",
   amount: "",
   createdAt: "",
   expiration: "",
-  isDeployer: bool
+  finalized: bool,
+  secret: ""
 }
 ```
-
----
-
-Frontend flow:
-
-User selects creation, selects chain, fills his details and sends tx on his chain.
