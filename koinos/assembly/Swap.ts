@@ -8,9 +8,9 @@ export class Swap {
   _contractId: Uint8Array;
   _state: State;
 
-  authorize(args: authority.authorize_arguments): authority.authorize_result {
-    return new authority.authorize_result(true);
-  }
+  // authorize(args: authority.authorize_arguments): authority.authorize_result {
+  //   return new authority.authorize_result(true);
+  // }
 
   constructor() {
     this._contractId = System.getContractId();

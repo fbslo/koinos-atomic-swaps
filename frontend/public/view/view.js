@@ -4,9 +4,13 @@ let koinosTxCreated = false;
 
 let swapContract;
 let swapContractEvm;
+let chain;
 
 let signer;
 let provider;
+
+let isEvmCompleted = false;
+let isKoinosCompleted = false;
 
 let chainNodes = {
   "bsc": "https://bsc-dataseed1.binance.org/",
@@ -45,9 +49,8 @@ let lockTimes = {
 }
 
 async function load(){
-  fireworks()
   let orderId = getParameterByName("id")
-  let chain = chainIdentificator[orderId.slice(0, 5)]
+  chain = chainIdentificator[orderId.slice(0, 1)]
   web3 = new Web3(chainNodes[chain])
 
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
@@ -99,10 +102,14 @@ async function load(){
     let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
 
+    if (result.finalized){
+      isKoinosCompleted = true;
+    }
+
     // both trades were initialized, now the secret can be released
     if (result.secret && result.secret.length > 0){
       document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
-      release(orderId, "evm")
+      release(orderId, "evm", result.secret)
     } else {
       release(orderId, "koinos", result.secret)
     }
@@ -166,11 +173,12 @@ async function create(){
   }, {
     rcLimit: 100000000,
     payer: payer,
+    chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
   });
 
   Swal.fire(
     'Congratulations!',
-    'Transaction was sent! ',
+    'Transaction was sent: ' + result.receipt.id,
     'success'
   )
 
@@ -197,6 +205,7 @@ async function getEvmSwap(orderId, chain, koinosSwapContract){
   }
 
   if (orderInfo.finalized){
+    isEvmCompleted = true;
     checkIfCompleted(koinosSwapContract, orderId)
   }
 
@@ -209,21 +218,34 @@ async function checkIfCompleted(koinosSwapContract, orderId){
   });
 
   if (result.finalized){
+    isKoinosCompleted = true
     document.getElementById("mainButton").innerText = 'Completed'
     document.getElementById("mainButton").classList.add("complete-button");
     document.getElementById("mainButton").onclick = false;
+
+    document.getElementById("secret").value = result.secret
+    document.getElementById("secret").readOnly = true
 
     document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
     document.getElementById("evm-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
 
     fireworks()
+    return true;
   }
+
+  return false;
 }
 
 async function release(id, side, secret){
+  if (isKoinosCompleted && isEvmCompleted){
+    checkIfCompleted(koinosSwapContract, id)
+    return false
+  }
+
   document.getElementById("secret").value = ""
   document.getElementById("secret").readOnly = false
   document.getElementById("mainButton").innerText = "Release"
+
   document.getElementById("mainButton").onclick = function(){
     if (side == "koinos") releaseKoinos(id)
     if (side == "evm") releaseEvm(id, secret)
@@ -246,11 +268,12 @@ async function releaseKoinos(id){
   }, {
     rcLimit: 100000000,
     payer: payer,
+    chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
   });
 
   Swal.fire(
     'Congratulations!',
-    'Transaction was sent!',
+    'Transaction was sent: ' + result.receipt.id,
     'success'
   )
 
@@ -258,10 +281,14 @@ async function releaseKoinos(id){
 }
 
 async function releaseEvm(id, secret){
-  let data = await swapContractEvm.methods.completeSwap(orderId, secret).encodeABI()
+  let data = await swapContractEvm.methods.completeSwap(id, secret).encodeABI()
+
+  let toContract = await getContract(chain)
+
+  console.log(toContract, chainIdentificator[chain], chain)
 
   const transactionParameters = {
-		to: await getContract(), // Required except during contract publications.
+		to: toContract, // Required except during contract publications.
 		from: await connectMetamask(), // must match user's active address.
 		data: data, // Optional, but used for defining smart contract creation and interaction.
 	};
@@ -307,7 +334,7 @@ async function connectMetamask(){
 }
 
 async function fireworks(){
-  let duration = 7.5 * 1000;
+  let duration = 5 * 1000;
   let animationEnd = Date.now() + duration;
   let defaults = { startVelocity: 20, spread: 360, ticks: 60, zIndex: 0 };
 
