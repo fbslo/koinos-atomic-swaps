@@ -97,8 +97,6 @@ async function fetchData(){
 
   evmOrder = orderInfo
   evmOrder.tokenDecimals = decimalsE
-
-  console.log(koinosOrder, evmOrder)
 }
 
 async function load(){
@@ -134,10 +132,25 @@ async function load(){
     let exp = Number(koinosOrder.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
 
-    if (await checkIfExpired()) return
-
     if (koinosOrder.finalized){
       isKoinosCompleted = true;
+    }
+
+    //check if both orders are expired and none is finalized
+    let TESTING_X = 1000000000
+    koinosOrder.finalized = false
+    evmOrder.finalized = false
+
+    if (
+      (!koinosOrder.finalized || !evmOrder.finalized)
+      &&
+      (
+        (new Date().getTime() / 1000) > evmOrder.expiration - TESTING_X && // TODO: remove the -1000000000 fort testing
+         new Date().getTime() > koinosOrder.expiration - TESTING_X
+      )
+    ){
+      orderExpired(orderId, chain, swapContract, swapContractEvm, koinosOrder, evmOrder)
+      return
     }
 
     // both trades were initialized, now the secret can be released
@@ -238,24 +251,8 @@ async function getEvmSwap(orderId, chain, koinosSwapContract){
     checkIfCompleted(koinosSwapContract, orderId)
   }
 
-  await checkIfExpired()
-
   return true;
 }
-
-async function checkIfExpired(){
-  if (
-    (new Date().getTime() / 1000) > evmOrder.expiration - 1000000000 || // TODO: remove the -1000000000 fort testing
-     new Date().getTime() > koinosOrder.expiration - 1000000000 ||  // TODO: remove the -1000000000 fort testing
-     (!koinosOrder.finalized && !evmOrder.finalized)
-  ){
-    //order expired, allow redeemption - cancel.js
-    orderExpired(orderId, chain, swapContract, swapContractEvm, koinosOrder, evmOrder)
-    return true
-  }
-  return false
-}
-
 
 async function checkIfCompleted(koinosSwapContract, orderId){
   if (koinosOrder.finalized){
@@ -323,10 +320,7 @@ async function releaseKoinos(id){
 
 async function releaseEvm(id, secret){
   let data = await swapContractEvm.methods.completeSwap(id, secret).encodeABI()
-
   let toContract = await getContract(chain)
-
-  console.log(toContract, chainIdentificator[chain], chain)
 
   const transactionParameters = {
 		to: toContract, // Required except during contract publications.

@@ -46,6 +46,19 @@
   width: 10%;
 }
 
+.buttonCancel {
+  background-color: white;
+  color: black;
+  border: 2px solid #555555;
+  width: 15%;
+}
+
+.buttonCancel:hover {
+  border-color: #25174E;
+  background-color: #25174E;
+  color: white;
+}
+
 .buttonLarge {
   width: 15%;
 }
