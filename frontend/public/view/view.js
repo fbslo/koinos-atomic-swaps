@@ -5,6 +5,9 @@ let koinosTxCreated = false;
 let swapContract;
 let swapContractEvm;
 
+let signer;
+let provider;
+
 let chainNodes = {
   "bsc": "https://bsc-dataseed1.binance.org/",
   "polygon": "https://polygon-rpc.com/",
@@ -12,10 +15,10 @@ let chainNodes = {
 }
 
 let chainIdentificator = {
-  "10101": "eth",
-  "13700": "polygon",
-  "43114": "avax",
-  "56056": "bsc"
+  "1": "eth",
+  "2": "polygon",
+  "3": "avax",
+  "4": "bsc"
 }
 
 let chainNames = {
@@ -42,6 +45,7 @@ let lockTimes = {
 }
 
 async function load(){
+  fireworks()
   let orderId = getParameterByName("id")
   let chain = chainIdentificator[orderId.slice(0, 5)]
   web3 = new Web3(chainNodes[chain])
@@ -49,8 +53,7 @@ async function load(){
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
   document.getElementById("id").value = orderId
 
-  let signer;
-  let provider = new Provider([
+  provider = new Provider([
     "https://api.koinos.io",
     window.location.origin+"/jsonrpc",
     "https://api.koinosblocks.com"
@@ -85,13 +88,13 @@ async function load(){
     });
 
     const resultDecimals = await tokenContract.functions.decimals();
-    let decimals = resultDecimals.result.decimals
+    let decimals = resultDecimals.result.value
 
     koinosTxCreated = true
     document.getElementById("creator").value = result.creator
     document.getElementById("receiver").value = result.receiver
     document.getElementById("token").value = result.token
-    document.getElementById("amount").value = result.amount / Math.pow(10, decimals) + ` (${result.amount})`
+    document.getElementById("amount").value = Number(result.amount) / Math.pow(10, decimals) + ` (${result.amount})`
     document.getElementById("expiration").innerHTML = `<input type="text" readonly="readonly" id="koinos_expiration" name="Expiration" placeholder="Expiration"><p>`
     let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
@@ -101,20 +104,25 @@ async function load(){
       document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
       release(orderId, "evm")
     } else {
-      document.getElementById("evm-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
       release(orderId, "koinos", result.secret)
     }
   }
 }
 
 async function create(){
+  let hash = document.getElementById("unlockHash").value.trim()
+
+  if (hash.startsWith("0x")){
+    hash = hash.substring(2)
+  }
+
   let details = {
-    creator: document.getElementById("creator").value,
-    receiver: document.getElementById("receiver").value,
-    token: document.getElementById("token").value,
-    amount: document.getElementById("amount").value,
-    id: document.getElementById("id").value,
-    hash: document.getElementById("unlockHash").value,
+    creator: document.getElementById("creator").value.trim(),
+    receiver: document.getElementById("receiver").value.trim(),
+    token: document.getElementById("token").value.trim(),
+    amount: document.getElementById("amount").value.trim(),
+    id: document.getElementById("id").value.trim(),
+    hash: hash,
     lockTime: Number(koinosLockTime) * 1000
   }
 
@@ -133,7 +141,21 @@ async function create(){
     return;
   }
 
-  const { result } = await swapContract.functions.createSwap({
+  let tokenContract = new Contract({
+    id: details.token,
+    abi: utils.tokenAbi,
+    provider,
+    signer,
+  });
+
+  let resultDecimals = await tokenContract.functions.decimals();
+  let decimals = resultDecimals.result.value
+
+  details.amount = (Number(details.amount) * Math.pow(10, decimals)).toString()
+
+  let payer = (await kondor.getAccounts())[0].address
+
+  const result = await swapContract.functions.createSwap({
     unlockHash: details.hash,
     creator: details.creator,
     receiver: details.receiver,
@@ -142,12 +164,13 @@ async function create(){
     id: details.id,
     lockTime: details.lockTime,
   }, {
-    rcLimit: 100000
+    rcLimit: 100000000,
+    payer: payer,
   });
 
   Swal.fire(
     'Congratulations!',
-    'Transaction was sent: '+ txHash,
+    'Transaction was sent! ',
     'success'
   )
 
@@ -192,6 +215,8 @@ async function checkIfCompleted(koinosSwapContract, orderId){
 
     document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
     document.getElementById("evm-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
+
+    fireworks()
   }
 }
 
@@ -199,23 +224,33 @@ async function release(id, side, secret){
   document.getElementById("secret").value = ""
   document.getElementById("secret").readOnly = false
   document.getElementById("mainButton").innerText = "Release"
-  document.getElementById("mainButton").onClick = function(){
+  document.getElementById("mainButton").onclick = function(){
     if (side == "koinos") releaseKoinos(id)
     if (side == "evm") releaseEvm(id, secret)
   }
 }
 
 async function releaseKoinos(id){
-  const { result } = await swapContract.functions.completeSwap({
+  let secret = document.getElementById("secret").value
+
+  if (!secret){
+    document.getElementById("secret").focus()
+    return
+  }
+
+  let payer = (await kondor.getAccounts())[0].address
+
+  const result = await swapContract.functions.completeSwap({
     id: id,
-    secret: document.getElementById("secret").value
+    secret: secret
   }, {
-    rcLimit: 100000
+    rcLimit: 100000000,
+    payer: payer,
   });
 
   Swal.fire(
     'Congratulations!',
-    'Transaction was sent: '+ txHash,
+    'Transaction was sent!',
     'success'
   )
 
@@ -269,4 +304,29 @@ async function connectMetamask(){
 	} else {
 		alert("MetaMask is not installed!")
 	}
+}
+
+async function fireworks(){
+  let duration = 7.5 * 1000;
+  let animationEnd = Date.now() + duration;
+  let defaults = { startVelocity: 20, spread: 360, ticks: 60, zIndex: 0 };
+
+  function randomInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  var interval = setInterval(function() {
+    var timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    var particleCount = 50 * (timeLeft / duration);
+    // since particles fall down, start a bit higher than random
+    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.5, 0.9), y: Math.random() - 0.2 } }));
+    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.3, 0.9), y: Math.random() - 0.2 } }));
+  }, 250);
 }

@@ -3,7 +3,7 @@ let lastSent;
 let isPending = false;
 let isDownloaded = false
 let min = 0
-let max = 10000000000000
+let max = 1000000000000
 let lockTime = 604800 //7 days
 let decimals = 0;
 
@@ -16,10 +16,10 @@ let chains = {
 }
 
 let chainIdentificator = {
-  "eth": "10101",     //Mainnet
-  "polygon": "13700",   //Polygon
-  "avax": "43114", //Avalanche
-  "bsc": "56056",   //BSC
+  "eth": "1",     //Mainnet
+  "polygon": "2",   //Polygon
+  "avax": "3", //Avalanche
+  "bsc": "4",   //BSC
 }
 
 let chainToId = {
