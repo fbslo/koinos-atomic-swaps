@@ -4,3 +4,5 @@ assembly/proto/*.ts
 assembly/index.ts
 assembly/*.boilerplate.ts
 node_modules/
+assembly/__tests__/swap.spec.wat
+assembly/__tests__/swap.spec.map
