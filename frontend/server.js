@@ -1,8 +1,10 @@
 //Proxy by @joticajulian: https://github.com/joticajulian/kondor/blob/main/server.js
-
+require("dotenv").config()
 const fastify = require("fastify")({ logger: true });
 const path = require("path");
 const axios = require("axios");
+
+let PORT = process.env.IS_LIVE == "false" ? 8080 : 8088
 
 // proxy jsonrpc to avoid cors issues
 const apiKoinos = "https://api.koinos.io";
@@ -31,7 +33,7 @@ fastify.register(require("@fastify/static"), {
 
 const start = async () => {
   try {
-    await fastify.listen({port: 8080, host: "0.0.0.0"});
+    await fastify.listen({port: PORT, host: "0.0.0.0"});
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

@@ -61,7 +61,7 @@ async function load(){
   }
 
   swapContract = new Contract({
-    id: "1CompCapuSTiLo8gfpygN79M18kyKEaBwj",
+    id: "1AtomicxFzn5XbFpSbsW2D1xj4Vo291vE2",
     abi: KoinosSwapContractABI,
     provider: provider,
     signer: signer

@@ -55,7 +55,7 @@ export class Swap {
     const swapObj = this._state.getSwap(args.id);
     const unlockHash = swapObj.unlockHash;
 
-    if (currentTime > swapObj.expiration){
+    if (currentTime >= swapObj.expiration){
       System.log("Expired");
       return new swap.completeSwap_result(false);
     }

@@ -4,32 +4,32 @@
             "input": "swap.createSwap_arguments",
             "output": "swap.createSwap_result",
             "description": "Create new Swap transaction",
-            "entryPoint": 2491777279,
-            "readOnly": false
+            "entry_point": 0x948580ff,
+            "read_only": false
         },
         "completeSwap": {
             "input": "swap.completeSwap_arguments",
             "output": "swap.completeSwap_result",
             "description": "Complete a Swap transaction",
-            "entryPoint": 697521037,
-            "readOnly": false
+            "entry_point": 0x2993538d,
+            "read_only": false
         },
         "cancelSwap": {
             "input": "swap.cancelSwap_arguments",
             "output": "swap.cancelSwap_result",
             "description": "Cancel a Swap transaction",
-            "entryPoint": 280700488,
-            "readOnly": false
+            "entry_point": 0x10bb2648,
+            "read_only": false
         },
         "getSwap": {
             "input": "swap.getSwap_arguments",
             "output": "swap.getSwap_result",
             "description": "Get a Swap transaction object",
-            "entryPoint": 931555731,
-            "readOnly": true
+            "entry_point": 0x37866993,
+            "read_only": true
         }
     },
-    "types": {
+    "koilib_types": {
         "nested": {
             "swap": {
                 "nested": {

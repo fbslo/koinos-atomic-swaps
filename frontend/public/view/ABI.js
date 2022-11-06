@@ -423,37 +423,37 @@ const SwapABI = [
 ]
 
 const KoinosSwapContractABI = {
-  "methods": {
-      "createSwap": {
-          "argument": "swap.createSwap_arguments",
-          "return": "swap.createSwap_result",
-          "description": "Create new Swap transaction",
-          "entry_point": 0x948580ff,
-          "read_only": false
-      },
-      "completeSwap": {
-          "argument": "swap.completeSwap_arguments",
-          "return": "swap.completeSwap_result",
-          "description": "Complete a Swap transaction",
-          "entry_point": 0x2993538d,
-          "read_only": false
-      },
-      "cancelSwap": {
-          "argument": "swap.cancelSwap_arguments",
-          "return": "swap.cancelSwap_result",
-          "description": "Cancel a Swap transaction",
-          "entry_point": 0x10bb2648,
-          "read_only": false
-      },
-      "getSwap": {
-          "argument": "swap.getSwap_arguments",
-          "return": "swap.getSwap_result",
-          "description": "Get a Swap transaction object",
-          "entry_point": 0x37866993,
-          "read_only": true
-      }
-  },
-  "koilib_types": {
+    "methods": {
+        "createSwap": {
+            "input": "swap.createSwap_arguments",
+            "output": "swap.createSwap_result",
+            "description": "Create new Swap transaction",
+            "entry_point": 0x948580ff,
+            "read_only": false
+        },
+        "completeSwap": {
+            "input": "swap.completeSwap_arguments",
+            "output": "swap.completeSwap_result",
+            "description": "Complete a Swap transaction",
+            "entry_point": 0x2993538d,
+            "read_only": false
+        },
+        "cancelSwap": {
+            "input": "swap.cancelSwap_arguments",
+            "output": "swap.cancelSwap_result",
+            "description": "Cancel a Swap transaction",
+            "entry_point": 0x10bb2648,
+            "read_only": false
+        },
+        "getSwap": {
+            "input": "swap.getSwap_arguments",
+            "output": "swap.getSwap_result",
+            "description": "Get a Swap transaction object",
+            "entry_point": 0x37866993,
+            "read_only": true
+        }
+    },
+    "koilib_types": {
         "nested": {
             "swap": {
                 "nested": {
