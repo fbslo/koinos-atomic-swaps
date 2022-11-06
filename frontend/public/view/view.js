@@ -12,6 +12,10 @@ let provider;
 let isEvmCompleted = false;
 let isKoinosCompleted = false;
 
+let orderId;
+let koinosOrder;
+let evmOrder;
+
 let chainNodes = {
   "bsc": "https://bsc-dataseed1.binance.org/",
   "polygon": "https://polygon-rpc.com/",
@@ -48,16 +52,7 @@ let lockTimes = {
   "604800": "432000" //7 days => 5 days
 }
 
-async function load(){
-  let orderId = getParameterByName("id")
-  chain = chainIdentificator[orderId.slice(0, 1)]
-  web3 = new Web3(chainNodes[chain])
-
-  console.log(chain)
-
-  document.getElementById("counterpartyChain").innerText = chainNames[chain]
-  document.getElementById("id").value = orderId
-
+async function fetchData(){
   provider = new Provider([
     "https://api.koinos.io",
     window.location.origin+"/jsonrpc",
@@ -78,47 +73,79 @@ async function load(){
     signer: signer
   });
 
-  getEvmSwap(orderId, chain, swapContract)
-
   const { result } = await swapContract.functions.getSwap({
     id: orderId
   });
 
-  if (result){
-    let tokenContract = new Contract({
-      id: result.token,
-      abi: utils.tokenAbi,
-      provider,
-      signer,
-    });
+  let tokenContract = new Contract({
+    id: result.token,
+    abi: utils.tokenAbi,
+    provider,
+    signer,
+  });
 
-    const resultDecimals = await tokenContract.functions.decimals();
-    let decimals = resultDecimals.result.value
+  const resultDecimals = await tokenContract.functions.decimals();
+  let decimalsK = resultDecimals.result.value
 
+  koinosOrder = result
+  koinosOrder.tokenDecimals = decimalsK
+
+  let swapContractAddress = await getContract(chain)
+  swapContractEvm = new web3.eth.Contract(SwapABI, swapContractAddress);
+  let orderInfo = await swapContractEvm.methods.swaps(orderId).call()
+  let decimalsE = await (new web3.eth.Contract(ABI, orderInfo.token)).methods.decimals().call()
+
+  evmOrder = orderInfo
+  evmOrder.tokenDecimals = decimalsE
+
+  console.log(koinosOrder, evmOrder)
+}
+
+async function load(){
+  orderId = getParameterByName("id")
+  chain = chainIdentificator[orderId.slice(0, 1)]
+  if (orderId == "560566182301441581") chain = "bsc"
+  web3 = new Web3(chainNodes[chain])
+
+  document.getElementById("counterpartyChain").innerText = chainNames[chain]
+  document.getElementById("id").value = orderId
+
+  await fetchData()
+
+  getEvmSwap(orderId, chain, swapContract)
+
+  if (koinosOrder){
     koinosTxCreated = true
-    document.getElementById("creator").value = result.creator
-    document.getElementById("receiver").value = result.receiver
-    document.getElementById("token").value = result.token
-    document.getElementById("amount").value = Number(result.amount) / Math.pow(10, decimals) + ` (${result.amount})`
+    document.getElementById("creator").value = koinosOrder.creator
+    document.getElementById("receiver").value = koinosOrder.receiver
+    document.getElementById("token").value = koinosOrder.token
+    document.getElementById("amount").value = Number(koinosOrder.amount) / Math.pow(10, koinosOrder.tokenDecimals) + ` (${koinosOrder.amount})`
     document.getElementById("expiration").innerHTML = `
       <span class="tooltip">
         <input type="text" readonly="readonly" id="koinos_expiration" name="Expiration" placeholder="Expiration">
         <span class="tooltiptext">Expiration</span>
       </span>
     `
-    let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
+    document.getElementById("creator").readOnly = true
+    document.getElementById("receiver").readOnly = true
+    document.getElementById("token").readOnly = true
+    document.getElementById("amount").readOnly = true
+
+    let exp = Number(koinosOrder.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
 
-    if (result.finalized){
+    if (await checkIfExpired()) return
+
+    if (koinosOrder.finalized){
       isKoinosCompleted = true;
     }
 
     // both trades were initialized, now the secret can be released
-    if (result.secret && result.secret.length > 0){
+    if (koinosOrder.secret && koinosOrder.secret.length > 0){
       document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
-      release(orderId, "evm", result.secret)
+      release(orderId, "evm", koinosOrder.secret)
     } else {
-      release(orderId, "koinos", result.secret)
+      release(orderId, "koinos", koinosOrder.secret)
     }
   }
 }
@@ -193,44 +220,51 @@ async function create(){
 }
 
 async function getEvmSwap(orderId, chain, koinosSwapContract){
-  let swapContractAddress = await getContract(chain)
-  swapContractEvm = new web3.eth.Contract(SwapABI, swapContractAddress);
-  let orderInfo = await swapContractEvm.methods.swaps(orderId).call()
-  let decimals = await (new web3.eth.Contract(ABI, orderInfo.token)).methods.decimals().call()
-
-  document.getElementById("evm_creator").value = orderInfo.creator
-  document.getElementById("evm_receiver").value = orderInfo.receiver
-  document.getElementById("evm_token").value = orderInfo.token
-  document.getElementById("evm_amount").value = orderInfo.amount / Math.pow(10, decimals) + ` (${orderInfo.amount})`
-  document.getElementById("evm_expiration").value = new Date(Number(orderInfo.expiration) * 1000).toString().split("(")[0] + ` (${await countdown(Number(orderInfo.expiration) * 1000)})`
-  document.getElementById("unlockHash").value = orderInfo.unlockHash
+  document.getElementById("evm_creator").value = evmOrder.creator
+  document.getElementById("evm_receiver").value = evmOrder.receiver
+  document.getElementById("evm_token").value = evmOrder.token
+  document.getElementById("evm_amount").value = evmOrder.amount / Math.pow(10, evmOrder.tokenDecimals) + ` (${evmOrder.amount})`
+  document.getElementById("evm_expiration").value = new Date(Number(evmOrder.expiration) * 1000).toString().split("(")[0] + ` (${await countdown(Number(evmOrder.expiration) * 1000)})`
+  document.getElementById("unlockHash").value = evmOrder.unlockHash
 
   if (!koinosTxCreated){
-    let orderLockTime = orderInfo.expiration - orderInfo.createdAt
+    let orderLockTime = evmOrder.expiration - evmOrder.createdAt
     koinosLockTime = lockTimes[orderLockTime]
     document.getElementById("lockTime").innerText = parseFloat(koinosLockTime / 86000).toFixed(1) + " days"
   }
 
-  if (orderInfo.finalized){
+  if (evmOrder.finalized){
     isEvmCompleted = true;
     checkIfCompleted(koinosSwapContract, orderId)
   }
 
+  await checkIfExpired()
+
   return true;
 }
 
-async function checkIfCompleted(koinosSwapContract, orderId){
-  const { result } = await swapContract.functions.getSwap({
-    id: orderId
-  });
+async function checkIfExpired(){
+  if (
+    (new Date().getTime() / 1000) > evmOrder.expiration - 1000000000 || // TODO: remove the -1000000000 fort testing
+     new Date().getTime() > koinosOrder.expiration - 1000000000 ||  // TODO: remove the -1000000000 fort testing
+     (!koinosOrder.finalized && !evmOrder.finalized)
+  ){
+    //order expired, allow redeemption - cancel.js
+    orderExpired(orderId, chain, swapContract, swapContractEvm, koinosOrder, evmOrder)
+    return true
+  }
+  return false
+}
 
-  if (result.finalized){
+
+async function checkIfCompleted(koinosSwapContract, orderId){
+  if (koinosOrder.finalized){
     isKoinosCompleted = true
     document.getElementById("mainButton").innerText = 'Completed'
     document.getElementById("mainButton").classList.add("complete-button");
     document.getElementById("mainButton").onclick = false;
 
-    document.getElementById("secret").value = result.secret
+    document.getElementById("secret").value = koinosOrder.secret
     document.getElementById("secret").readOnly = true
 
     document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
