@@ -49,14 +49,17 @@ async function load(){
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
   document.getElementById("id").value = orderId
 
-  let provider;
   let signer;
+  let provider = new Provider([
+    "https://api.koinos.io",
+    window.location.origin+"/jsonrpc",
+    "https://api.koinosblocks.com"
+  ]);
   if (kondor.provider) {
-    provider = kondor.provider
+    // provider = kondor.provider
     signer = await kondor.getSigner()
   } else {
-    provider = new Provider([window.location.origin+"/jsonrpc"]);
-    signer = Signer.fromWif("5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ");
+    signer = Signer.fromWif("5HueCGU8rMjxEXxiPuD5BDku4MkFqeZyd4dZ1jvhTVqvbTLvyTJ"); //random private key
     signer.provider = provider;
   }
 
@@ -74,11 +77,21 @@ async function load(){
   });
 
   if (result){
+    let tokenContract = new Contract({
+      id: result.token,
+      abi: utils.tokenAbi,
+      provider,
+      signer,
+    });
+
+    const resultDecimals = await tokenContract.functions.decimals();
+    let decimals = resultDecimals.result.decimals
+
     koinosTxCreated = true
     document.getElementById("creator").value = result.creator
     document.getElementById("receiver").value = result.receiver
     document.getElementById("token").value = result.token
-    document.getElementById("amount").value = result.amount
+    document.getElementById("amount").value = result.amount / Math.pow(10, decimals) + ` (${result.amount})`
     document.getElementById("expiration").innerHTML = `<input type="text" readonly="readonly" id="koinos_expiration" name="Expiration" placeholder="Expiration"><p>`
     let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`

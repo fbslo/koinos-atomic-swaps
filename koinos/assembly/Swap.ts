@@ -2,6 +2,7 @@ import { chain, System, Base58, Token, Crypto, claim, Arrays, StringBytes, Proto
 import { swap } from "./proto/swap";
 import { State } from "./State";
 
+// Have fun reading it. Hopefully it's bug-free. God bless.
 
 export class Swap {
   _contractId: Uint8Array;
