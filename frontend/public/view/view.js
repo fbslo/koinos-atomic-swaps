@@ -53,6 +53,8 @@ async function load(){
   chain = chainIdentificator[orderId.slice(0, 1)]
   web3 = new Web3(chainNodes[chain])
 
+  console.log(chain)
+
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
   document.getElementById("id").value = orderId
 
@@ -98,7 +100,12 @@ async function load(){
     document.getElementById("receiver").value = result.receiver
     document.getElementById("token").value = result.token
     document.getElementById("amount").value = Number(result.amount) / Math.pow(10, decimals) + ` (${result.amount})`
-    document.getElementById("expiration").innerHTML = `<input type="text" readonly="readonly" id="koinos_expiration" name="Expiration" placeholder="Expiration"><p>`
+    document.getElementById("expiration").innerHTML = `
+      <span class="tooltip">
+        <input type="text" readonly="readonly" id="koinos_expiration" name="Expiration" placeholder="Expiration">
+        <span class="tooltiptext">Expiration</span>
+      </span>
+    `
     let exp = Number(result.expiration) //without Number(), it will throw Invalid Date error
     document.getElementById("koinos_expiration").value = new Date(exp).toString().split("(")[0] + ` (${await countdown(exp)})`
 
@@ -352,7 +359,7 @@ async function fireworks(){
     var particleCount = 50 * (timeLeft / duration);
     // since particles fall down, start a bit higher than random
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 1.0), y: Math.random() - 0.2 } }));
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.5, 0.9), y: Math.random() - 0.2 } }));
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.3, 0.9), y: Math.random() - 0.2 } }));
   }, 250);

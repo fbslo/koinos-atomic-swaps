@@ -24,20 +24,47 @@
            <div class="split">
              <form class="" action="index.html" method="post">
                <h1><span id='counterpartyChain'>BSC</span> <span id="evm-checkmark"></span></h1><p>
-               <input type="text" readonly="readonly" id="evm_creator" name="Creator Address" placeholder="Creator Address"><p>
-               <input type="text" readonly="readonly" id="evm_receiver" name="Receiver Address" placeholder="Receiver Address"><p>
-               <input type="text" readonly="readonly" id="evm_token" name="Token Address" placeholder="Token Address"><p>
-               <input type="text" readonly="readonly" id="evm_amount" name="Token Amount" placeholder="Token Amount"><p>
-               <input type="text" readonly="readonly" id="evm_expiration" name="Expiration" placeholder="Expiration"><p>
+               <span class="tooltip">
+                 <input type="text" readonly="readonly" id="evm_creator" name="Creator Address" placeholder="Creator Address">
+                 <span class="tooltiptext">Creator</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" readonly="readonly" id="evm_receiver" name="Receiver Address" placeholder="Receiver Address">
+                 <span class="tooltiptext">Receiver</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" readonly="readonly" id="evm_token" name="Token Address" placeholder="Token Address">
+                 <span class="tooltiptext">Token</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" readonly="readonly" id="evm_amount" name="Token Amount" placeholder="Token Amount">
+                 <span class="tooltiptext">Amount</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" readonly="readonly" id="evm_expiration" name="Expiration" placeholder="Expiration">
+                 <span class="tooltiptext">Expiration</span><p>
+               </span>
              </form>
            </div>
            <div class="split">
              <form class="" action="index.html" method="post">
                <h1>Koinos <span id="koinos-checkmark"></span></h1><p>
-               <input type="text" id="creator" name="Creator Address" placeholder="Creator Address"><p>
-               <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address"><p>
-               <input type="text" readonly="readonly" id="token" name="Token Address" placeholder="Token Address" value="15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL"><p>
-               <input type="text" id="amount" name="Token Amount" placeholder="Token Amount"><p>
+               <span class="tooltip">
+                 <input type="text" id="creator" name="Creator Address" placeholder="Creator Address">
+                 <span class="tooltiptext">Creator</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" id="receiver" name="Receiver Address" placeholder="Receiver Address">
+                 <span class="tooltiptext">Receiver</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" readonly="readonly" id="token" name="Token Address" placeholder="Token Address" value="15DJN4a8SgrbGhhGksSBASiSYjGnMU8dGL">
+                 <span class="tooltiptext">Token</span><p>
+               </span>
+               <span class="tooltip">
+                 <input type="text" id="amount" name="Token Amount" placeholder="Token Amount">
+                 <span class="tooltiptext">Amount</span><p>
+               </span>
                <span id="expiration"><button type="button" class="button buttonTime" id="lockTime">? days</button></span>
              </form>
            </div>
