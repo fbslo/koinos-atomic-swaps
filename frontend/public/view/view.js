@@ -144,7 +144,7 @@ async function load(){
       (!koinosOrder.finalized || !evmOrder.finalized)
       &&
       (
-        (new Date().getTime() / 1000) > evmOrder.expiration && // TODO: remove the -1000000000 fort testing
+        (new Date().getTime() / 1000) > evmOrder.expiration &&
          new Date().getTime() > koinosOrder.expiration
       )
     ){
@@ -282,6 +282,11 @@ async function release(id, side, secret){
   document.getElementById("secret").value = ""
   document.getElementById("secret").readOnly = false
   document.getElementById("mainButton").innerText = "Release"
+
+  if (secret.length > 0){
+    document.getElementById("secret").value = secret
+    document.getElementById("secret").readOnly = true
+  }
 
   document.getElementById("mainButton").onclick = function(){
     if (side == "koinos") releaseKoinos(id)
