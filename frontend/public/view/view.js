@@ -344,9 +344,9 @@ async function releaseEvm(id, secret){
 //tooltips are broken on linux on chrome
 async function removeTooltipsLinux(){
   if (navigator.appVersion.indexOf("Linux") != -1 && window.navigator.userAgent.includes("Chrome")){
-    let toRemove = document.getElementsByClassName("tooltiptext")
-    for (let i in toRemove){
-      toRemove[i].innerText = ""
+    let toRemove = Array.prototype.slice.call( document.getElementsByClassName("tooltiptext") )
+    for (let i = toRemove.length - 1; i >= 0; i--){
+      toRemove[i].remove()
     }
   }
 }
