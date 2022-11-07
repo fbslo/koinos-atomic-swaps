@@ -18,14 +18,21 @@ export class Swap {
   }
 
   createSwap(args: swap.createSwap_arguments): swap.createSwap_result {
-    const id = args.id;
-    const res = new swap.createSwap_result(0);
+    const id = args.id!;
+    const res = new swap.createSwap_result("0");
     const creator = args.creator as Uint8Array;
 
     if ((this._state.getSwap(id)).creator != null) {
       System.log("ID not unique");
       return res;
     }
+
+    if (!args.id || !args.unlockHash){
+      System.log("Missing arguments");
+      return res;
+    }
+
+    if (args.unlockHash!.startsWith("0x")) args.unlockHash = args.unlockHash!.substring(2);
 
     const token = new Token(args.token!);
 
@@ -53,7 +60,7 @@ export class Swap {
 
   completeSwap(args: swap.completeSwap_arguments): swap.completeSwap_result {
     const currentTime = System.getHeadInfo().head_block_time;
-    const swapObj = this._state.getSwap(args.id);
+    const swapObj = this._state.getSwap(args.id!);
     const unlockHash = swapObj.unlockHash;
 
     if (currentTime >= swapObj.expiration){
@@ -75,7 +82,7 @@ export class Swap {
 
     swapObj.finalized = true;
     swapObj.secret = args.secret;
-    this._state.saveSwap(swapObj.id, swapObj);
+    this._state.saveSwap(swapObj.id!, swapObj);
 
     const token = new Token(swapObj.token!);
 
@@ -88,7 +95,7 @@ export class Swap {
 
   cancelSwap(args: swap.cancelSwap_arguments): swap.cancelSwap_result {
     const currentTime = System.getHeadInfo().head_block_time;
-    const swapObj = this._state.getSwap(args.id);
+    const swapObj = this._state.getSwap(args.id!);
 
     if (swapObj.expiration > currentTime){
       System.log("Not expired");
@@ -101,7 +108,7 @@ export class Swap {
     }
 
     swapObj.finalized = true;
-    this._state.saveSwap(swapObj.id, swapObj);
+    this._state.saveSwap(swapObj.id!, swapObj);
 
     const token = new Token(swapObj.token!);
 
@@ -113,7 +120,7 @@ export class Swap {
   }
 
   getSwap(args: swap.getSwap_arguments): swap.getSwap_result {
-    let swapObj = this._state.getSwap(args.id);
+    let swapObj = this._state.getSwap(args.id!);
     return new swap.getSwap_result(
       swapObj.unlockHash,
       swapObj.creator,

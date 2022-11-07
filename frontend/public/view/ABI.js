@@ -492,11 +492,8 @@ const KoinosSwapContractABI = {
                                 }
                             },
                             "id": {
-                                "type": "uint64",
-                                "id": 6,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 6
                             },
                             "lockTime": {
                                 "type": "uint64",
@@ -510,22 +507,16 @@ const KoinosSwapContractABI = {
                     "createSwap_result": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
                     "completeSwap_arguments": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             },
                             "secret": {
                                 "type": "string",
@@ -544,11 +535,8 @@ const KoinosSwapContractABI = {
                     "cancelSwap_arguments": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
@@ -563,11 +551,8 @@ const KoinosSwapContractABI = {
                     "getSwap_arguments": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
@@ -624,11 +609,8 @@ const KoinosSwapContractABI = {
                                 "id": 8
                             },
                             "id": {
-                                "type": "uint64",
-                                "id": 9,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 9
                             },
                             "secret": {
                                 "type": "string",
@@ -689,11 +671,8 @@ const KoinosSwapContractABI = {
                                 "id": 8
                             },
                             "id": {
-                                "type": "uint64",
-                                "id": 9,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 9
                             },
                             "secret": {
                                 "type": "string",
@@ -704,22 +683,16 @@ const KoinosSwapContractABI = {
                     "create_event": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
                     "complete_event": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             },
                             "secret": {
                                 "type": "string",
@@ -730,11 +703,8 @@ const KoinosSwapContractABI = {
                     "cancel_event": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     }

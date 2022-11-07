@@ -8,8 +8,8 @@ export class State {
     this.swapSpace = new chain.object_space(false, contractId, 0);
   }
 
-  getSwap(id: u64): swap.swap_object {
-    const swapObj = System.getObject<string, swap.swap_object>(this.swapSpace, id.toString(), swap.swap_object.decode);
+  getSwap(id: string): swap.swap_object {
+    const swapObj = System.getObject<string, swap.swap_object>(this.swapSpace, id, swap.swap_object.decode);
 
     if (swapObj) {
       return swapObj;
@@ -18,7 +18,7 @@ export class State {
     return new swap.swap_object();
   }
 
-  saveSwap(id: u64, swapObj: swap.swap_object): void {
-    System.putObject(this.swapSpace, id.toString(), swapObj, swap.swap_object.encode);
+  saveSwap(id: string, swapObj: swap.swap_object): void {
+    System.putObject(this.swapSpace, id, swapObj, swap.swap_object.encode);
   }
 }

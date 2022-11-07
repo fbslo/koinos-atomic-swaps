@@ -104,7 +104,6 @@ async function fetchData(){
 async function load(){
   orderId = getParameterByName("id")
   chain = chainIdentificator[orderId.slice(0, 1)]
-  if (orderId == "560566182301441581") chain = "bsc"
   web3 = new Web3(chainNodes[chain])
 
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
@@ -146,7 +145,7 @@ async function load(){
       &&
       (
         (new Date().getTime() / 1000) > evmOrder.expiration && // TODO: remove the -1000000000 fort testing
-         new Date().getTime() > koinosOrder.expiration 
+         new Date().getTime() > koinosOrder.expiration
       )
     ){
       orderExpired(orderId, chain, swapContract, swapContractEvm, koinosOrder, evmOrder)

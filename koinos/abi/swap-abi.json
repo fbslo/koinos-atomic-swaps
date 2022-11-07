@@ -68,11 +68,8 @@
                                 }
                             },
                             "id": {
-                                "type": "uint64",
-                                "id": 6,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 6
                             },
                             "lockTime": {
                                 "type": "uint64",
@@ -86,22 +83,16 @@
                     "createSwap_result": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
                     "completeSwap_arguments": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             },
                             "secret": {
                                 "type": "string",
@@ -120,11 +111,8 @@
                     "cancelSwap_arguments": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
@@ -139,11 +127,8 @@
                     "getSwap_arguments": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
@@ -200,11 +185,8 @@
                                 "id": 8
                             },
                             "id": {
-                                "type": "uint64",
-                                "id": 9,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 9
                             },
                             "secret": {
                                 "type": "string",
@@ -265,11 +247,8 @@
                                 "id": 8
                             },
                             "id": {
-                                "type": "uint64",
-                                "id": 9,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 9
                             },
                             "secret": {
                                 "type": "string",
@@ -280,22 +259,16 @@
                     "create_event": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     },
                     "complete_event": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             },
                             "secret": {
                                 "type": "string",
@@ -306,11 +279,8 @@
                     "cancel_event": {
                         "fields": {
                             "id": {
-                                "type": "uint64",
-                                "id": 1,
-                                "options": {
-                                    "jstype": "JS_STRING"
-                                }
+                                "type": "string",
+                                "id": 1
                             }
                         }
                     }

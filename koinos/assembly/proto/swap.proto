@@ -14,12 +14,12 @@ message createSwap_arguments {
   bytes receiver = 3 [(koinos.btype) = ADDRESS];
   bytes token = 4 [(koinos.btype) = ADDRESS];
   uint64 amount  = 5 [jstype = JS_STRING];
-  uint64 id  = 6 [jstype = JS_STRING];
+  string id  = 6;
   uint64 lockTime = 7 [jstype = JS_STRING];
 }
 
 message createSwap_result {
-   uint64 id = 1 [jstype = JS_STRING];
+   string id = 1;
 }
 
 /*
@@ -27,7 +27,7 @@ message createSwap_result {
    @read-only false
 */
 message completeSwap_arguments {
-  uint64 id = 1 [jstype = JS_STRING];
+  string id = 1;
   string secret = 2;
 }
 
@@ -40,7 +40,7 @@ message completeSwap_result {
    @read-only false
 */
 message cancelSwap_arguments {
-  uint64 id = 1 [jstype = JS_STRING];
+  string id = 1;
 }
 
 message cancelSwap_result {
@@ -52,7 +52,7 @@ message cancelSwap_result {
    @read-only true
 */
 message getSwap_arguments {
-  uint64 id = 1 [jstype = JS_STRING];
+  string id = 1;
 }
 
 message getSwap_result {
@@ -64,7 +64,7 @@ message getSwap_result {
   uint64 expiration  = 6 [jstype = JS_STRING];
   uint64 createdAt  = 7 [jstype = JS_STRING];
   bool finalized = 8;
-  uint64 id  = 9 [jstype = JS_STRING];
+  string id  = 9;
   string secret = 10;
 }
 
@@ -79,21 +79,21 @@ message swap_object {
   uint64 expiration  = 6 [jstype = JS_STRING];
   uint64 createdAt  = 7 [jstype = JS_STRING];
   bool finalized = 8;
-  uint64 id  = 9 [jstype = JS_STRING];
+  string id  = 9;
   string secret = 10;
 }
 
 //Events
 
 message create_event {
-  uint64 id = 1 [jstype = JS_STRING];
+  string id = 1;
 }
 
 message complete_event {
-  uint64 id = 1 [jstype = JS_STRING];
+  string id = 1;
   string secret = 2;
 }
 
 message cancel_event {
-  uint64 id = 1 [jstype = JS_STRING];
+  string id = 1;
 }
