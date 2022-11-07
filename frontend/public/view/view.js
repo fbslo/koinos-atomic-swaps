@@ -77,18 +77,20 @@ async function fetchData(){
     id: orderId
   });
 
-  let tokenContract = new Contract({
-    id: result.token,
-    abi: utils.tokenAbi,
-    provider,
-    signer,
-  });
+  if (result){
+    let tokenContract = new Contract({
+      id: result.token,
+      abi: utils.tokenAbi,
+      provider,
+      signer,
+    });
 
-  const resultDecimals = await tokenContract.functions.decimals();
-  let decimalsK = resultDecimals.result.value
+    const resultDecimals = await tokenContract.functions.decimals();
+    let decimalsK = resultDecimals.result.value
 
-  koinosOrder = result
-  koinosOrder.tokenDecimals = decimalsK
+    koinosOrder = result
+    koinosOrder.tokenDecimals = decimalsK
+  }
 
   let swapContractAddress = await getContract(chain)
   swapContractEvm = new web3.eth.Contract(SwapABI, swapContractAddress);
@@ -126,6 +128,7 @@ async function load(){
         <span class="tooltiptext">Expiration</span>
       </span>
     `
+    removeTooltipsLinux()
     document.getElementById("creator").readOnly = true
     document.getElementById("receiver").readOnly = true
     document.getElementById("token").readOnly = true
