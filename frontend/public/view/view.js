@@ -286,6 +286,10 @@ async function release(id, side, secret){
   if (secret.length > 0){
     document.getElementById("secret").value = secret
     document.getElementById("secret").readOnly = true
+    document.getElementById("action-title").innerText = "Release funds on"
+    document.getElementById("chain-title").innerText = "Release funds on"
+  } else {
+    document.getElementById("action-title").innerText = chainNames[chain]
   }
 
   document.getElementById("mainButton").onclick = function(){
