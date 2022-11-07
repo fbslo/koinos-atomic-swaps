@@ -141,17 +141,12 @@ async function load(){
       isKoinosCompleted = true;
     }
 
-    //check if both orders are expired and none is finalized
-    let TESTING_X = 1000000000
-    koinosOrder.finalized = false
-    evmOrder.finalized = false
-
     if (
       (!koinosOrder.finalized || !evmOrder.finalized)
       &&
       (
-        (new Date().getTime() / 1000) > evmOrder.expiration - TESTING_X && // TODO: remove the -1000000000 fort testing
-         new Date().getTime() > koinosOrder.expiration - TESTING_X
+        (new Date().getTime() / 1000) > evmOrder.expiration && // TODO: remove the -1000000000 fort testing
+         new Date().getTime() > koinosOrder.expiration 
       )
     ){
       orderExpired(orderId, chain, swapContract, swapContractEvm, koinosOrder, evmOrder)
