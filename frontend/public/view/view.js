@@ -266,6 +266,9 @@ async function checkIfCompleted(koinosSwapContract, orderId){
     document.getElementById("koinos-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
     document.getElementById("evm-checkmark").innerHTML = `<i class="fa fa-check fa-1x" aria-hidden="true"></i>`
 
+    document.getElementById("chain-title").innerText = "Transaction Completed"
+    document.getElementById("action-title").remove()
+
     fireworks()
     return true;
   }
