@@ -2,15 +2,15 @@ import { chain, System, Base58, Token, Crypto, claim, Arrays, StringBytes, Proto
 import { swap } from "./proto/swap";
 import { State } from "./State";
 
-// Have fun reading it. Hopefully it's bug-free. God bless.
+const IS_UPGRADEABLE = true;
 
 export class Swap {
   _contractId: Uint8Array;
   _state: State;
 
-  // authorize(args: authority.authorize_arguments): authority.authorize_result {
-  //   return new authority.authorize_result(true);
-  // }
+  authorize(args: authority.authorize_arguments): authority.authorize_result {
+    return new authority.authorize_result(IS_UPGRADEABLE);
+  }
 
   constructor() {
     this._contractId = System.getContractId();

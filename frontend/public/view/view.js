@@ -108,6 +108,8 @@ async function load(){
   document.getElementById("counterpartyChain").innerText = chainNames[chain]
   document.getElementById("id").value = orderId
 
+  removeTooltipsLinux()
+
   await fetchData()
 
   getEvmSwap(orderId, chain, swapContract)
@@ -337,6 +339,16 @@ async function releaseEvm(id, secret){
     'Transaction was sent: '+ txHash,
     'success'
   )
+}
+
+//tooltips are broken on linux on chrome
+async function removeTooltipsLinux(){
+  if (navigator.appVersion.indexOf("Linux") != -1 && window.navigator.userAgent.includes("Chrome")){
+    let toRemove = document.getElementsByClassName("tooltiptext")
+    for (let i in toRemove){
+      toRemove[i].innerText = ""
+    }
+  }
 }
 
 async function countdown(timestamp){
