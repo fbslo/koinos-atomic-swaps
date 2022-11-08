@@ -25,13 +25,22 @@ async function orderExpired(orderId, chain, koinosSwapContract, swapContractEvm,
 async function cancelKoinos(){
   let payer = (await kondor.getAccounts())[0].address
 
-  const result = await swapContract.functions.cancelSwap({
-    id: koinosOrder.id,
-  }, {
-    rcLimit: 100000000,
-    payer: payer,
-    chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
-  });
+  try {
+    const result = await swapContract.functions.cancelSwap({
+      id: koinosOrder.id,
+    }, {
+      rcLimit: 100000000,
+      payer: payer,
+      chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
+    });
+  } catch (e){
+    let error = JSON.parse("{" + e.toString().split("{")[1]).error
+    Swal.fire(
+      'Error!',
+      'Transaction failed: ' + JSON.parse(error),
+      'error'
+    )
+  }
 
   Swal.fire(
     'Congratulations!',

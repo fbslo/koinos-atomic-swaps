@@ -208,19 +208,28 @@ async function create(){
 
   let payer = (await kondor.getAccounts())[0].address
 
-  const result = await swapContract.functions.createSwap({
-    unlockHash: details.hash,
-    creator: details.creator,
-    receiver: details.receiver,
-    token: details.token,
-    amount: details.amount,
-    id: details.id,
-    lockTime: details.lockTime,
-  }, {
-    rcLimit: 100000000,
-    payer: payer,
-    chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
-  });
+  try {
+    const result = await swapContract.functions.createSwap({
+      unlockHash: details.hash,
+      creator: details.creator,
+      receiver: details.receiver,
+      token: details.token,
+      amount: details.amount,
+      id: details.id,
+      lockTime: details.lockTime,
+    }, {
+      rcLimit: 100000000,
+      payer: payer,
+      chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
+    });
+  } catch (e){
+    let error = JSON.parse("{" + e.toString().split("{")[1]).error
+    Swal.fire(
+      'Error!',
+      'Transaction failed: ' + JSON.parse(error),
+      'error'
+    )
+  }
 
   Swal.fire(
     'Congratulations!',
@@ -312,14 +321,23 @@ async function releaseKoinos(id){
 
   let payer = (await kondor.getAccounts())[0].address
 
-  const result = await swapContract.functions.completeSwap({
-    id: id,
-    secret: secret
-  }, {
-    rcLimit: 100000000,
-    payer: payer,
-    chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
-  });
+  try {
+    const result = await swapContract.functions.completeSwap({
+      id: id,
+      secret: secret
+    }, {
+      rcLimit: 100000000,
+      payer: payer,
+      chainId: "EiBZK_GGVP0H_fXVAM3j6EAuz3-B-l3ejxRSewi7qIBfSA=="
+    });
+  } catch (e){
+    let error = JSON.parse("{" + e.toString().split("{")[1]).error
+    Swal.fire(
+      'Error!',
+      'Transaction failed: ' + JSON.parse(error),
+      'error'
+    )
+  }
 
   Swal.fire(
     'Congratulations!',
@@ -349,6 +367,15 @@ async function releaseEvm(id, secret){
     'Transaction was sent: '+ txHash,
     'success'
   )
+  document.getElementById("mainButton").innerHTML = `<i class="fa fa-refresh fa-spin"></i> Releasing`
+
+  let interval = setInterval(async () => {
+    let txReceipt = await web3.eth.getTransactionReceipt(txHash)
+    if (txReceipt && txReceipt.blockNumber){
+      clearInterval(interval)
+      checkIfCompleted(koinosSwapContract, id)
+    }
+  }, 5000)
 }
 
 //tooltips are broken on linux on chrome
