@@ -23,13 +23,11 @@ export class Swap {
     const creator = args.creator as Uint8Array;
 
     if ((this._state.getSwap(id)).creator != null) {
-      System.log("ID not unique");
-      return res;
+      System.revert("ID not unique");
     }
 
     if (!args.id || !args.unlockHash){
-      System.log("Missing arguments");
-      return res;
+      System.revert("Missing arguments");
     }
 
     if (args.unlockHash!.startsWith("0x")) args.unlockHash = args.unlockHash!.substring(2);
@@ -64,20 +62,17 @@ export class Swap {
     const unlockHash = swapObj.unlockHash;
 
     if (currentTime >= swapObj.expiration){
-      System.log("Expired");
-      return new swap.completeSwap_result(false);
+      System.revert("Expired");
     }
 
     if (swapObj.finalized == true){
-      System.log("Already finalized");
-      return new swap.completeSwap_result(false);
+      System.revert("Already finalized");
     }
 
     const secretHash = System.hash(Crypto.multicodec.keccak_256, StringBytes.stringToBytes(args.secret!));
 
     if (Arrays.toHexString(secretHash!, false).slice(4) != unlockHash){
-      System.log("Invalid secret");
-      return new swap.completeSwap_result(false);
+      System.revert("Invalid secret");
     }
 
     swapObj.finalized = true;
@@ -98,13 +93,11 @@ export class Swap {
     const swapObj = this._state.getSwap(args.id!);
 
     if (swapObj.expiration > currentTime){
-      System.log("Not expired");
-      return new swap.cancelSwap_result(false);
+      System.revert("Not expired");
     }
 
     if (swapObj.finalized == true){
-      System.log("Already finalized");
-      return new swap.cancelSwap_result(false);
+      System.revert("Already finalized");
     }
 
     swapObj.finalized = true;
