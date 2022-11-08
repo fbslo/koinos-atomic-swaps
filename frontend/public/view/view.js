@@ -286,13 +286,14 @@ async function release(id, side, secret){
   document.getElementById("secret").readOnly = false
   document.getElementById("mainButton").innerText = "Release"
 
-  if (secret.length > 0){
+  if (secret && secret.length > 0){
     document.getElementById("secret").value = secret
     document.getElementById("secret").readOnly = true
     document.getElementById("action-title").innerText = "Release funds on"
-    document.getElementById("chain-title").innerText = "Release funds on"
+    document.getElementById("chain-title").innerText = chainNames[chain]
   } else {
-    document.getElementById("action-title").innerText = chainNames[chain]
+    document.getElementById("action-title").innerText = "Release funds on"
+    document.getElementById("chain-title").innerText = "Koinos"
   }
 
   document.getElementById("mainButton").onclick = function(){
