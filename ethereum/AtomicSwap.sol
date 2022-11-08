@@ -49,7 +49,7 @@ contract HTLC {
    * @param receiver Address that will receive funds on this chain
    * @param token Address of the token that will be traded on this chain
    * @param amount Amount of the token that will be traded on this chain
-   * @param lockTime Selected lockup time (from LockTime enum)
+   * @param lockTime Selected lockup time (in seconds)
    */
   function createSwap(
     uint256 id,
